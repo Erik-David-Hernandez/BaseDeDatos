@@ -3,39 +3,64 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.UsuarioController">
-    <padding><Insets top="20" right="20" bottom="20" left="20"/></padding>
-    
+<BorderPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.UsuarioController">
+    <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
+
     <top>
-        <VBox spacing="15">
-            <BorderPane>
-                <left><Label text="Panel de Lector - Buscar y Reservar" style="-fx-font-size: 18px; -fx-font-weight: bold;" BorderPane.alignment="CENTER"/></left>
-                <right><Button text="Cerrar Sesión" onAction="#cerrarSesion" BorderPane.alignment="CENTER"/></right>
-            </BorderPane>
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Buscar Libro: "/>
-                <TextField prefWidth="300"/>
-                <Button text="Buscar"/>
-            </HBox>
-        </VBox>
-    </top>
-    
-    <center>
-        <TableView fx:id="tablaLibros" VBox.vgrow="ALWAYS">
-            <columns>
-                <TableColumn text="ID" fx:id="colId" prefWidth="100"/>
-                <TableColumn text="Título" fx:id="colTitulo" prefWidth="200"/>
-                <TableColumn text="Autor" fx:id="colAutor" prefWidth="150"/>
-                <TableColumn text="Disponibilidad" fx:id="colDisp" prefWidth="150"/>
-            </columns>
-            <BorderPane.margin><Insets top="15" bottom="15"/></BorderPane.margin>
-        </TableView>
-    </center>
-    
-    <bottom>
-        <HBox spacing="10" alignment="CENTER_RIGHT">
-            <Button text="Ver Mi Historial" onAction="#verHistorial"/>
-            <Button text="Reservar Libro Seleccionado" onAction="#reservarLibro"/>
+        <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-padding: 0 0 10 0;">
+            <Label fx:id="lblBienvenida" text="Panel de Lector" style="-fx-font-size: 17px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Button text="Cerrar Sesión" onAction="#cerrarSesion" styleClass="button-danger"/>
         </HBox>
-    </bottom>
+    </top>
+
+    <center>
+        <TabPane tabClosingPolicy="UNAVAILABLE">
+            <Tab text="Catálogo y Reservas">
+                <VBox spacing="10" style="-fx-padding: 12;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Buscar (Título, Autor o Género):"/>
+                        <TextField fx:id="txtBuscar" promptText="Ej. Cien años, Gabriel, Fantasía..." prefWidth="320" onAction="#buscarLibros"/>
+                        <Button text="Buscar" onAction="#buscarLibros"/>
+                        <Button text="Mostrar Todos" onAction="#limpiarBusqueda"/>
+                    </HBox>
+
+                    <TableView fx:id="tablaLibros" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="ID" fx:id="colId" prefWidth="55"/>
+                            <TableColumn text="Título" fx:id="colTitulo" prefWidth="240"/>
+                            <TableColumn text="Autor" fx:id="colAutor" prefWidth="180"/>
+                            <TableColumn text="Género" fx:id="colGenero" prefWidth="150"/>
+                            <TableColumn text="Sección" fx:id="colSeccion" prefWidth="105"/>
+                            <TableColumn text="Disponibilidad" fx:id="colDisp" prefWidth="130"/>
+                        </columns>
+                    </TableView>
+
+                    <HBox spacing="12" alignment="CENTER_RIGHT" styleClass="card">
+                        <Label text="Fecha recogida:"/>
+                        <DatePicker fx:id="dpFechaRecogida" prefWidth="135"/>
+                        <Label text="Días préstamo:"/>
+                        <Spinner fx:id="spDiasPrestamo" prefWidth="75"/>
+                        <Button text="Reservar Libro Seleccionado" onAction="#reservarLibro" styleClass="button-success"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+
+            <Tab text="Mi Historial de Préstamos y Reservas">
+                <VBox spacing="10" style="-fx-padding: 12;">
+                    <TableView fx:id="tablaHistorial" VBox.vgrow="ALWAYS">
+                        <columns>
+                            <TableColumn text="Folio" fx:id="colHistId" prefWidth="70"/>
+                            <TableColumn text="Libro" fx:id="colHistLibro" prefWidth="280"/>
+                            <TableColumn text="Fecha Inicio" fx:id="colHistInicio" prefWidth="160"/>
+                            <TableColumn text="Fecha Devolución" fx:id="colHistFin" prefWidth="160"/>
+                            <TableColumn text="Estado" fx:id="colHistEstado" prefWidth="120"/>
+                        </columns>
+                    </TableView>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button text="Cancelar Reserva Seleccionada" onAction="#cancelarReserva" styleClass="button-danger"/>
+                    </HBox>
+                </VBox>
+            </Tab>
+        </TabPane>
+    </center>
 </BorderPane>

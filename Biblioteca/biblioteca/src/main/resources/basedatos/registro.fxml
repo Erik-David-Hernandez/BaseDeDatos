@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox alignment="CENTER" spacing="14.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.RegistroController">
+    <padding><Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/></padding>
+
+    <VBox alignment="CENTER" spacing="10.0" maxWidth="400" styleClass="card">
+        <Label text="Registro de Nuevo Lector" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+
+        <VBox spacing="4" alignment="CENTER_LEFT">
+            <Label text="Nombre completo:"/>
+            <TextField fx:id="txtNombre" promptText="Nombre y apellidos" maxWidth="Infinity"/>
+        </VBox>
+
+        <VBox spacing="4" alignment="CENTER_LEFT">
+            <Label text="Correo electrónico:"/>
+            <TextField fx:id="txtEmail" promptText="correo@ejemplo.com" maxWidth="Infinity"/>
+        </VBox>
+
+        <VBox spacing="4" alignment="CENTER_LEFT">
+            <Label text="Contraseña (mín. 6 caracteres):"/>
+            <PasswordField fx:id="txtPassword" maxWidth="Infinity"/>
+        </VBox>
+
+        <VBox spacing="4" alignment="CENTER_LEFT">
+            <Label text="Confirmar contraseña:"/>
+            <PasswordField fx:id="txtConfirmarPassword" maxWidth="Infinity"/>
+        </VBox>
+
+        <CheckBox fx:id="chkPrivacidad" text="Acepto el aviso de privacidad y protección de datos (LFPDPPP)" wrapText="true"/>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Registrarme" onAction="#registrarUsuario" styleClass="button-success" prefWidth="150"/>
+            <Button text="Volver al Login" onAction="#volverLogin" prefWidth="150"/>
+        </HBox>
+    </VBox>
+</VBox>

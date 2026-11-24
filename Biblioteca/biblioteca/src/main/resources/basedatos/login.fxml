@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="15.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.LoginController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-    
-    <Label text="Bienvenido a la Biblioteca" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
-    
-    <Label text="Usuario:"/>
-    <TextField fx:id="txtUsuario" maxWidth="200"/>
-    
-    <Label text="Contraseña:"/>
-    <PasswordField fx:id="txtPassword" maxWidth="200"/>
-    
-    <Button text="Iniciar Sesión" onAction="#iniciarSesion" defaultButton="true"/>
-    
-    <Label text="(Escribe 'admin' para panel de administrador, cualquier otro texto para usuario normal)" style="-fx-text-fill: gray;"/>
+<VBox alignment="CENTER" spacing="14.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.LoginController">
+    <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/></padding>
+
+    <VBox alignment="CENTER" spacing="12.0" maxWidth="380" styleClass="card">
+        <Label text="Biblioteca Virtual" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+        <Label text="Inicia sesión con tu cuenta registrada" style="-fx-text-fill: #666666;"/>
+
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Correo electrónico:"/>
+            <TextField fx:id="txtUsuario" promptText="ej. carlos.gomez@email.com" maxWidth="Infinity"/>
+        </VBox>
+
+        <VBox spacing="5" alignment="CENTER_LEFT">
+            <Label text="Contraseña:"/>
+            <PasswordField fx:id="txtPassword" promptText="••••••" maxWidth="Infinity"/>
+        </VBox>
+
+        <HBox spacing="10" alignment="CENTER">
+            <Button text="Iniciar Sesión" onAction="#iniciarSesion" defaultButton="true" prefWidth="150"/>
+            <Button text="Crear Cuenta" onAction="#irARegistro" prefWidth="150" styleClass="button-success"/>
+        </HBox>
+
+        <Label text="Admin prueba: carlos.gomez@email.com | Pass: 123456" style="-fx-font-size: 11px; -fx-text-fill: gray;"/>
+        <Label text="Lector prueba: juan.perez@email.com | Pass: 123456" style="-fx-font-size: 11px; -fx-text-fill: gray;"/>
+    </VBox>
 </VBox>
