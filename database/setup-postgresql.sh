@@ -51,7 +51,7 @@ case $(uname -s) in
                 if ! command -v psql >/dev/null || ! command -v initdb >/dev/null; then
                     as_root pacman -S --needed --noconfirm postgresql
                 fi
-                if [[ ! -f /var/lib/postgres/data/PG_VERSION ]]; then
+                if ! as_root test -f /var/lib/postgres/data/PG_VERSION; then
                     as_postgres initdb -D /var/lib/postgres/data --auth-local=peer --auth-host=scram-sha-256
                 fi
                 as_root systemctl start postgresql
