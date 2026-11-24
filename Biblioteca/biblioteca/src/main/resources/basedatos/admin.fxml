@@ -9,7 +9,7 @@
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 10 0;">
             <Label fx:id="lblAdmin" text="Panel de Administración" style="-fx-font-size: 17px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <Button text="Recargar datos" onAction="#recargarTodo">
+            <Button text="Recargar datos" onAction="#recargarTodo"/>
             <Button text="Cerrar Sesión" onAction="#cerrarSesion" styleClass="button-danger"/>
         </HBox>
     </top>
