@@ -1,4 +1,4 @@
-package basedatos;
+package basedatos.models;
 
 public class Genero {
     private int idGenero;

@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<BorderPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.AdminController">
+<BorderPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.controllers.AdminController">
     <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
 
     <top>

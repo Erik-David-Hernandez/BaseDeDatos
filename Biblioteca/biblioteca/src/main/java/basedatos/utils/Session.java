@@ -1,4 +1,6 @@
-package basedatos;
+package basedatos.utils;
+
+import basedatos.models.Usuario;
 
 public class Session {
     private static Usuario usuarioActual;

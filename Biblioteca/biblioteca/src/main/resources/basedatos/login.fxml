@@ -3,7 +3,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
 
-<VBox alignment="CENTER" spacing="14.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.LoginController">
+<VBox alignment="CENTER" spacing="14.0" xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.controllers.LoginController">
     <padding><Insets bottom="30.0" left="30.0" right="30.0" top="30.0"/></padding>
 
     <VBox alignment="CENTER" spacing="12.0" maxWidth="380" styleClass="card">

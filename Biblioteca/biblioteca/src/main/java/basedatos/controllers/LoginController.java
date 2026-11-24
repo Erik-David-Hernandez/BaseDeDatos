@@ -1,4 +1,9 @@
-package basedatos;
+package basedatos.controllers;
+
+import basedatos.App;
+import basedatos.models.BibliotecaDAO;
+import basedatos.utils.Session;
+import basedatos.models.Usuario;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;

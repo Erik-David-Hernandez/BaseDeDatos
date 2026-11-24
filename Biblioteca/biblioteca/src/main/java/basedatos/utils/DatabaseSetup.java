@@ -1,4 +1,4 @@
-package basedatos;
+package basedatos.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -9,10 +9,10 @@ import java.sql.SQLException;
 import java.util.Locale;
 
 /** Startup only: DAO connection failures must never launch an installer. */
-final class DatabaseSetup {
+public final class DatabaseSetup {
     private DatabaseSetup() {}
 
-    static void ensureReady() throws IOException, SQLException, InterruptedException {
+    public static void ensureReady() throws IOException, SQLException, InterruptedException {
         try (Connection ignored = ConexionDB.getConnection()) {
             return;
         } catch (SQLException error) {

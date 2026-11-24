@@ -4,6 +4,8 @@ module basedatos {
     requires java.sql;
     requires org.postgresql.jdbc;
 
-    opens basedatos to javafx.fxml;
+    opens basedatos.controllers to javafx.fxml;
+    opens basedatos.models to javafx.base;
     exports basedatos;
+    exports basedatos.models;
 }

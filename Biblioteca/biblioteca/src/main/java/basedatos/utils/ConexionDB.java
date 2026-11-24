@@ -1,4 +1,4 @@
-package basedatos;
+package basedatos.utils;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

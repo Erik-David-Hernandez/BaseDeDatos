@@ -1,4 +1,14 @@
-package basedatos;
+package basedatos.controllers;
+
+import basedatos.App;
+import basedatos.models.Auditoria;
+import basedatos.models.Autor;
+import basedatos.models.BibliotecaDAO;
+import basedatos.models.Genero;
+import basedatos.models.Libro;
+import basedatos.models.Prestamo;
+import basedatos.utils.Session;
+import basedatos.models.Usuario;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;

@@ -1,4 +1,7 @@
-package basedatos;
+package basedatos.models;
+
+import basedatos.utils.ConexionDB;
+import basedatos.utils.PasswordUtil;
 
 import java.sql.*;
 import java.time.LocalDateTime;
