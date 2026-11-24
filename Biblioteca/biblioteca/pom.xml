@@ -8,6 +8,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <jpackage.type>app-image</jpackage.type>
     </properties>
     <dependencies>
         <dependency>
@@ -52,4 +53,86 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>native</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <version>3.8.1</version>
+                        <executions>
+                            <execution>
+                                <id>stage-runtime-dependencies</id>
+                                <phase>prepare-package</phase>
+                                <goals><goal>copy-dependencies</goal></goals>
+                                <configuration>
+                                    <includeScope>runtime</includeScope>
+                                    <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>stage-application</id>
+                                <phase>verify</phase>
+                                <goals><goal>copy-resources</goal></goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/jpackage-input</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.directory}</directory>
+                                            <filtering>false</filtering>
+                                            <includes><include>${project.build.finalName}.jar</include></includes>
+                                        </resource>
+                                        <resource>
+                                            <directory>${project.basedir}/../..</directory>
+                                            <filtering>false</filtering>
+                                            <includes>
+                                                <include>setup-postgresql.sh</include>
+                                                <include>database/biblioteca_virtual.sql</include>
+                                            </includes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>3.5.0</version>
+                        <executions>
+                            <execution>
+                                <id>package-native-application</id>
+                                <phase>verify</phase>
+                                <goals><goal>exec</goal></goals>
+                                <configuration>
+                                    <executable>${java.home}/bin/jpackage</executable>
+                                    <arguments>
+                                        <argument>--type</argument><argument>${jpackage.type}</argument>
+                                        <argument>--name</argument><argument>Biblioteca</argument>
+                                        <argument>--app-version</argument><argument>1.0</argument>
+                                        <argument>--dest</argument><argument>${project.build.directory}/dist</argument>
+                                        <argument>--input</argument><argument>${project.build.directory}/jpackage-input</argument>
+                                        <argument>--main-jar</argument><argument>${project.build.finalName}.jar</argument>
+                                        <argument>--main-class</argument><argument>basedatos.Launcher</argument>
+                                        <argument>--add-modules</argument>
+                                        <argument>java.sql,java.desktop,java.scripting,java.naming,java.management,java.security.jgss,jdk.unsupported</argument>
+                                        <argument>--java-options</argument><argument>-Dbiblioteca.app.dir=$APPDIR</argument>
+                                    </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
