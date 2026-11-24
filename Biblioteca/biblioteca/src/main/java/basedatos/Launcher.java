@@ -1,6 +1,6 @@
 package basedatos;
 
-/** Classpath entry point for jpackage; lets JavaFX initialize via Application.launch. */
+/** Entry point for executable JARs and jpackage; initializes JavaFX via Application.launch. */
 public final class Launcher {
     private Launcher() {}
 

@@ -1,6 +1,7 @@
 package basedatos.utils;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -51,6 +52,16 @@ public final class DatabaseSetup {
             Path script = Paths.get(appDirectory).resolve("database/setup-postgresql.sh");
             if (Files.isRegularFile(script)) return script;
             throw new IOException("La instalación no incluye el script: " + script);
+        }
+        // An executable JAR has its setup files next to it, regardless of cwd.
+        try {
+            Path location = Paths.get(DatabaseSetup.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+            if (Files.isRegularFile(location)) {
+                Path script = location.getParent().resolve("database/setup-postgresql.sh");
+                if (Files.isRegularFile(script)) return script;
+            }
+        } catch (URISyntaxException error) {
+            throw new IOException("No se pudo localizar el directorio de la aplicación.", error);
         }
         for (Path dir = Paths.get("").toAbsolutePath(); dir != null; dir = dir.getParent()) {
             Path script = dir.resolve("database/setup-postgresql.sh");
