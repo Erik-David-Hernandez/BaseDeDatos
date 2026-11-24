@@ -144,23 +144,23 @@ INSERT INTO autor (nombres, apellido_p, apellido_m) VALUES
 ('George', 'Orwell', NULL), ('Jane', 'Austen', NULL), ('J.K.', 'Rowling', NULL);
 
 -- Hash SHA-256 con salt 'salt123' para password '123456':
--- SHA256("salt123123456") = 71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174
+-- SHA256("salt123123456") = 95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8
 INSERT INTO usuario (nombre, email, pswd, salt, rol, activo) VALUES
-('Carlos Gómez', 'carlos.gomez@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'administrador', TRUE),
-('Elena Morales', 'elena.morales@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'bibliotecario', TRUE),
-('Juan Pérez', 'juan.perez@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('María Rodríguez', 'maria.rodriguez@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Ana Martínez', 'ana.martinez@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Luis Hernández', 'luis.hernandez@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Sofía López', 'sofia.lopez@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Diego Torres', 'diego.torres@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', FALSE),
-('Laura Díaz', 'laura.diaz@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Fernando Ruiz', 'fernando.ruiz@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Javier Castro', 'javier.castro@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Patricia Ortiz', 'patricia.ortiz@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Alejandro Gutiérrez', 'alejandro.g@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Camila Navarro', 'camila.navarro@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', TRUE),
-('Roberto Ramos', 'roberto.ramos@email.com', '71642c1a40b181711a345655b14084488276511532820996420b4c1c2c9d1174', 'salt123', 'lector', FALSE)
+('Carlos Gómez', 'carlos.gomez@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'administrador', TRUE),
+('Elena Morales', 'elena.morales@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'bibliotecario', TRUE),
+('Juan Pérez', 'juan.perez@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('María Rodríguez', 'maria.rodriguez@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Ana Martínez', 'ana.martinez@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Luis Hernández', 'luis.hernandez@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Sofía López', 'sofia.lopez@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Diego Torres', 'diego.torres@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', FALSE),
+('Laura Díaz', 'laura.diaz@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Fernando Ruiz', 'fernando.ruiz@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Javier Castro', 'javier.castro@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Patricia Ortiz', 'patricia.ortiz@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Alejandro Gutiérrez', 'alejandro.g@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Camila Navarro', 'camila.navarro@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', TRUE),
+('Roberto Ramos', 'roberto.ramos@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', FALSE)
 ON CONFLICT (email) DO NOTHING;
 
 INSERT INTO libro (titulo, isbn, codigo_seccion, n_ejemplares, id_genero, id_autor) VALUES
