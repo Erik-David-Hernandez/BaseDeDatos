@@ -18,6 +18,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -74,6 +75,7 @@ public class AdminController {
     @FXML private TableColumn<Usuario, String> colUsrEstado;
     @FXML private ComboBox<String> cbRolUsuario;
     @FXML private CheckBox chkUsuarioActivo;
+    @FXML private HBox panelEdicionUsuarios;
 
     // Tab 4: Auditoría
     @FXML private TableView<Auditoria> tablaAuditoria;
@@ -93,6 +95,7 @@ public class AdminController {
 
         spEjemplaresLibro.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 500, 3));
         cbRolUsuario.setItems(FXCollections.observableArrayList("lector", "bibliotecario", "administrador"));
+        panelEdicionUsuarios.setDisable(u == null || !u.isAdministrador());
 
         // Configurar columnas Libros
         colLibId.setCellValueFactory(new PropertyValueFactory<>("idLibro"));
@@ -350,6 +353,11 @@ public class AdminController {
 
     @FXML
     private void guardarCambiosUsuario() {
+        Usuario actor = Session.getUsuarioActual();
+        if (actor == null || !actor.isAdministrador()) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Acceso restringido", "Solo los administradores pueden modificar usuarios.");
+            return;
+        }
         Usuario u = tablaAdminUsuarios.getSelectionModel().getSelectedItem();
         if (u == null || cbRolUsuario.getValue() == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "Selecciona un usuario de la tabla.");
@@ -357,7 +365,7 @@ public class AdminController {
         }
         try {
             BibliotecaDAO.actualizarUsuarioAdmin(u.getIdUsuario(), cbRolUsuario.getValue(),
-                    chkUsuarioActivo.isSelected(), Session.getUsuarioActual().getIdUsuario());
+                    chkUsuarioActivo.isSelected(), actor.getIdUsuario());
             recargarTodo();
             mostrarAlerta(Alert.AlertType.INFORMATION, "Usuario Actualizado", "Permisos y estado actualizados.");
         } catch (SQLException e) {

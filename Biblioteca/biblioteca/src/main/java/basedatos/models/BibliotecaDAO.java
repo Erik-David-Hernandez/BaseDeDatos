@@ -2,6 +2,7 @@ package basedatos.models;
 
 import basedatos.utils.ConexionDB;
 import basedatos.utils.PasswordUtil;
+import basedatos.utils.Session;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -402,13 +403,26 @@ public class BibliotecaDAO {
     }
 
     public static void actualizarUsuarioAdmin(int idUsuario, String nuevoRol, boolean nuevoActivo, int idAdmin) throws SQLException {
-        String sql = "UPDATE usuario SET rol = ?, activo = ? WHERE id_usuario = ?";
+        Usuario actor = Session.getUsuarioActual();
+        if (actor == null || !actor.isAdministrador() || actor.getIdUsuario() != idAdmin) {
+            throw new SQLException("Solo los administradores pueden modificar usuarios.", "42501");
+        }
+        if (!"lector".equals(nuevoRol) && !"bibliotecario".equals(nuevoRol) && !"administrador".equals(nuevoRol)) {
+            throw new SQLException("Selecciona un rol válido.");
+        }
+        // Recheck the persisted role so a stale or revoked session cannot write.
+        String sql = "UPDATE usuario SET rol = ?, activo = ? WHERE id_usuario = ? "
+                + "AND EXISTS (SELECT 1 FROM usuario actor WHERE actor.id_usuario = ? "
+                + "AND actor.rol = 'administrador' AND actor.activo = TRUE)";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, nuevoRol);
             ps.setBoolean(2, nuevoActivo);
             ps.setInt(3, idUsuario);
-            ps.executeUpdate();
+            ps.setInt(4, idAdmin);
+            if (ps.executeUpdate() != 1) {
+                throw new SQLException("No se pudo modificar el usuario. Comprueba tus permisos y recarga los datos.", "42501");
+            }
         }
         registrarAuditoria(idAdmin, "ACTUALIZAR_USUARIO", "usuario",
                 "Usuario ID " + idUsuario + " -> rol=" + nuevoRol + ", activo=" + nuevoActivo);

@@ -20,5 +20,6 @@ public class Usuario {
     public String getEmail() { return email; }
     public String getRol() { return rol; }
     public boolean isActivo() { return activo; }
+    public boolean isAdministrador() { return activo && "administrador".equalsIgnoreCase(rol); }
     public String getEstadoTexto() { return activo ? "Activo" : "Inactivo"; }
 }

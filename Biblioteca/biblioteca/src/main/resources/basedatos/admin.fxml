@@ -111,7 +111,8 @@
                             <TableColumn text="Estado" fx:id="colUsrEstado" prefWidth="120"/>
                         </columns>
                     </TableView>
-                    <HBox spacing="12" alignment="CENTER_RIGHT" styleClass="card">
+                    <Label text="Solo los administradores pueden modificar usuarios."/>
+                    <HBox fx:id="panelEdicionUsuarios" spacing="12" alignment="CENTER_RIGHT" styleClass="card">
                         <Label text="Rol:"/>
                         <ComboBox fx:id="cbRolUsuario" prefWidth="150"/>
                         <CheckBox fx:id="chkUsuarioActivo" text="Usuario Activo"/>
