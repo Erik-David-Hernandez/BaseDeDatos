@@ -9,8 +9,15 @@ import basedatos.models.Libro;
 import basedatos.models.Prestamo;
 import basedatos.utils.Session;
 import basedatos.models.Usuario;
+import basedatos.utils.FiltroPrestamos;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
+import javafx.event.ActionEvent;
+import javafx.geometry.Insets;
+import javafx.scene.layout.GridPane;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -43,6 +50,12 @@ public class AdminController {
     @FXML private TableColumn<Libro, Integer> colLibEjemplares;
 
     // Tab 2: Préstamos
+    @FXML private TextField txtBuscarPrestamos;
+    @FXML private DatePicker dpPrestamosDesde;
+    @FXML private DatePicker dpPrestamosHasta;
+    @FXML private Label lblFiltroPrestamos;
+    private final ObservableList<Prestamo> prestamos = FXCollections.observableArrayList();
+    private final FilteredList<Prestamo> prestamosFiltrados = new FilteredList<>(prestamos);
     @FXML private TableView<Prestamo> tablaAdminPrestamos;
     @FXML private TableColumn<Prestamo, Integer> colPresId;
     @FXML private TableColumn<Prestamo, String> colPresUsuario;
@@ -95,6 +108,12 @@ public class AdminController {
         colPresInicio.setCellValueFactory(new PropertyValueFactory<>("fechaInicioTexto"));
         colPresFin.setCellValueFactory(new PropertyValueFactory<>("fechaFinTexto"));
         colPresEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
+        SortedList<Prestamo> ordenados = new SortedList<>(prestamosFiltrados);
+        ordenados.comparatorProperty().bind(tablaAdminPrestamos.comparatorProperty());
+        tablaAdminPrestamos.setItems(ordenados);
+        txtBuscarPrestamos.textProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
+        dpPrestamosDesde.valueProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
+        dpPrestamosHasta.valueProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
 
         // Configurar columnas Usuarios
         colUsrId.setCellValueFactory(new PropertyValueFactory<>("idUsuario"));
@@ -127,13 +146,33 @@ public class AdminController {
             cbGeneroLibro.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerGeneros()));
             cbAutorLibro.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerAutores()));
             tablaAdminLibros.setItems(FXCollections.observableArrayList(BibliotecaDAO.buscarLibros("")));
-            tablaAdminPrestamos.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerTodosPrestamos()));
+            prestamos.setAll(BibliotecaDAO.obtenerTodosPrestamos());
+            filtrarPrestamos();
             tablaAdminUsuarios.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerTodosUsuarios()));
             tablaAuditoria.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerAuditoria()));
         } catch (SQLException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error de Conexión", e.getMessage());
         }
     }
+
+    private void filtrarPrestamos() {
+        prestamosFiltrados.setPredicate(p -> FiltroPrestamos.coincide(p, txtBuscarPrestamos.getText(),
+                dpPrestamosDesde.getValue(), dpPrestamosHasta.getValue()));
+        if (dpPrestamosDesde.getValue() != null && dpPrestamosHasta.getValue() != null
+                && dpPrestamosDesde.getValue().isAfter(dpPrestamosHasta.getValue())) {
+            lblFiltroPrestamos.setText("La fecha desde debe ser anterior o igual a hasta.");
+        } else {
+            lblFiltroPrestamos.setText(prestamosFiltrados.size() + " de " + prestamos.size() + " préstamos");
+        }
+    }
+
+    @FXML
+    private void limpiarFiltrosPrestamos() {
+        txtBuscarPrestamos.clear();
+        dpPrestamosDesde.setValue(null);
+        dpPrestamosHasta.setValue(null);
+    }
+
 
     @FXML
     private void agregarLibro() {
@@ -207,6 +246,25 @@ public class AdminController {
     @FXML
     private void marcarDevuelto() {
         cambiarEstadoSeleccionado("devuelto");
+    }
+
+    @FXML
+    private void cancelarPrestamo() {
+        Prestamo prestamo = tablaAdminPrestamos.getSelectionModel().getSelectedItem();
+        if (prestamo == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "Selecciona un préstamo de la tabla.");
+            return;
+        }
+        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmacion.initOwner(tablaAdminPrestamos.getScene().getWindow());
+        confirmacion.setTitle("Cancelar préstamo");
+        confirmacion.setHeaderText("Cancelar préstamo #" + prestamo.getIdReserva());
+        confirmacion.setContentText(prestamo.getNombreUsuario() + " — " + prestamo.getTituloLibro()
+                + "\nSe devolverá un ejemplar al inventario disponible.");
+        ButtonType confirmar = new ButtonType("Cancelar préstamo", ButtonBar.ButtonData.OK_DONE);
+        ButtonType volver = new ButtonType("Volver", ButtonBar.ButtonData.CANCEL_CLOSE);
+        confirmacion.getButtonTypes().setAll(confirmar, volver);
+        if (confirmacion.showAndWait().orElse(volver) == confirmar) cambiarEstadoSeleccionado("cancelado");
     }
 
     private void cambiarEstadoSeleccionado(String estado) {
