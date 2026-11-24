@@ -173,6 +173,67 @@ public class AdminController {
         dpPrestamosHasta.setValue(null);
     }
 
+    @FXML
+    private void editarLibro() {
+        Libro libro = tablaAdminLibros.getSelectionModel().getSelectedItem();
+        if (libro == null) {
+            mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "Selecciona el libro que deseas editar.");
+            return;
+        }
+        TextField titulo = new TextField(libro.getTitulo());
+        TextField isbn = new TextField(libro.getIsbn());
+        TextField seccion = new TextField(libro.getCodigoSeccion());
+        ComboBox<Autor> autor = new ComboBox<>(FXCollections.observableArrayList(cbAutorLibro.getItems()));
+        ComboBox<Genero> genero = new ComboBox<>(FXCollections.observableArrayList(cbGeneroLibro.getItems()));
+        autor.getItems().stream().filter(a -> a.getIdAutor() == libro.getIdAutor()).findFirst().ifPresent(autor::setValue);
+        genero.getItems().stream().filter(g -> g.getIdGenero() == libro.getIdGenero()).findFirst().ifPresent(genero::setValue);
+        Spinner<Integer> disponibles = new Spinner<>(0, Integer.MAX_VALUE, libro.getNEjemplares());
+        Label error = new Label();
+        error.setWrapText(true);
+        error.setStyle("-fx-text-fill: #b91c1c;");
+        GridPane form = new GridPane();
+        form.setHgap(12);
+        form.setVgap(10);
+        form.setPadding(new Insets(12));
+        form.addRow(0, new Label("Título:"), titulo);
+        form.addRow(1, new Label("ISBN:"), isbn);
+        form.addRow(2, new Label("Sección:"), seccion);
+        form.addRow(3, new Label("Autor:"), autor);
+        form.addRow(4, new Label("Género:"), genero);
+        form.addRow(5, new Label("Ejemplares disponibles:"), disponibles);
+        form.add(error, 0, 6, 2, 1);
+        titulo.setPrefWidth(300);
+        autor.setMaxWidth(Double.MAX_VALUE);
+        genero.setMaxWidth(Double.MAX_VALUE);
+
+        Dialog<Void> dialog = new Dialog<>();
+        dialog.initOwner(tablaAdminLibros.getScene().getWindow());
+        dialog.setTitle("Editar libro #" + libro.getIdLibro());
+        dialog.setHeaderText("Modificar registro del libro");
+        dialog.getDialogPane().setContent(form);
+        dialog.getDialogPane().getStylesheets().addAll(tablaAdminLibros.getScene().getStylesheets());
+        ButtonType guardar = new ButtonType("Guardar cambios", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelar = new ButtonType("Cancelar", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().setAll(guardar, cancelar);
+        dialog.getDialogPane().lookupButton(guardar).addEventFilter(ActionEvent.ACTION, event -> {
+            event.consume();
+            if (titulo.getText().trim().isEmpty() || isbn.getText().trim().isEmpty()
+                    || seccion.getText().trim().isEmpty() || autor.getValue() == null || genero.getValue() == null) {
+                error.setText("Completa todos los datos del libro.");
+                return;
+            }
+            try {
+                BibliotecaDAO.actualizarLibro(libro, titulo.getText(), isbn.getText(), seccion.getText(),
+                        disponibles.getValue(), genero.getValue().getIdGenero(), autor.getValue().getIdAutor(),
+                        Session.getUsuarioActual().getIdUsuario());
+                dialog.close();
+                recargarTodo();
+            } catch (SQLException e) {
+                error.setText(e.getMessage());
+            }
+        });
+        dialog.showAndWait();
+    }
 
     @FXML
     private void agregarLibro() {

@@ -302,18 +302,78 @@ public class BibliotecaDAO {
         return lista;
     }
 
-    public static void cambiarEstadoPrestamo(Prestamo p, String nuevoEstado, int idAdmin) throws SQLException {
-        String sql = "UPDATE prestamo SET estado = ?, fecha_devolucion_real = ? WHERE id_reserva = ?";
-        try (Connection conn = ConexionDB.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, nuevoEstado);
-            if ("devuelto".equalsIgnoreCase(nuevoEstado)) {
-                ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
-            } else {
-                ps.setNull(2, Types.TIMESTAMP);
+    public static void actualizarLibro(Libro original, String titulo, String isbn, String seccion,
+            int disponibles, int idGenero, int idAutor, int idAdmin) throws SQLException {
+        if (titulo == null || titulo.trim().isEmpty() || isbn == null || isbn.trim().isEmpty()
+                || seccion == null || seccion.trim().isEmpty() || disponibles < 0) {
+            throw new SQLException("Completa los datos del libro y usa una cantidad disponible no negativa.");
+        }
+        // Compare the original fields so an open dialog cannot overwrite another
+        // librarian's edit or inventory changes from new reservations/returns.
+        String sql = "UPDATE libro SET titulo=?, isbn=?, codigo_seccion=?, n_ejemplares=?, id_genero=?, id_autor=? "
+                + "WHERE id_libro=? AND titulo=? AND isbn=? AND codigo_seccion=? "
+                + "AND n_ejemplares=? AND id_genero=? AND id_autor=?";
+        try (Connection conn = ConexionDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, titulo.trim());
+            ps.setString(2, isbn.trim());
+            ps.setString(3, seccion.trim());
+            ps.setInt(4, disponibles);
+            ps.setInt(5, idGenero);
+            ps.setInt(6, idAutor);
+            ps.setInt(7, original.getIdLibro());
+            ps.setString(8, original.getTitulo());
+            ps.setString(9, original.getIsbn());
+            ps.setString(10, original.getCodigoSeccion());
+            ps.setInt(11, original.getNEjemplares());
+            ps.setInt(12, original.getIdGenero());
+            ps.setInt(13, original.getIdAutor());
+            if (ps.executeUpdate() != 1) {
+                throw new SQLException("El libro cambió o fue eliminado. Cierra la ventana, recarga los datos y vuelve a editar.");
             }
-            ps.setInt(3, p.getIdReserva());
-            ps.executeUpdate();
+        }
+        registrarAuditoria(idAdmin, "EDITAR_LIBRO", "libro", "Editó libro #" + original.getIdLibro() + ": " + titulo.trim());
+    }
+
+    public static void cambiarEstadoPrestamo(Prestamo p, String nuevoEstado, int idAdmin) throws SQLException {
+        String anterior = p.getEstado();
+        boolean permitido = ("reservado".equals(anterior)
+                && ("prestado".equals(nuevoEstado) || "cancelado".equals(nuevoEstado)))
+                || (("prestado".equals(anterior) || "vencido".equals(anterior))
+                && ("devuelto".equals(nuevoEstado) || "cancelado".equals(nuevoEstado)));
+        if (!permitido) {
+            throw new SQLException("No se puede cambiar un préstamo de '" + anterior + "' a '" + nuevoEstado + "'.");
+        }
+        String sql = "UPDATE prestamo SET estado = ?, fecha_devolucion_real = ? "
+                + "WHERE id_reserva = ? AND estado = ? RETURNING id_libro";
+        try (Connection conn = ConexionDB.getConnection()) {
+            conn.setAutoCommit(false);
+            try {
+                int idLibro;
+                try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                    ps.setString(1, nuevoEstado);
+                    if ("devuelto".equals(nuevoEstado)) ps.setTimestamp(2, Timestamp.valueOf(LocalDateTime.now()));
+                    else ps.setNull(2, Types.TIMESTAMP);
+                    ps.setInt(3, p.getIdReserva());
+                    ps.setString(4, anterior);
+                    try (ResultSet rs = ps.executeQuery()) {
+                        if (!rs.next()) throw new SQLException("El préstamo cambió o fue eliminado. Recarga los datos.");
+                        idLibro = rs.getInt("id_libro");
+                    }
+                }
+                // The installed inventory trigger releases reserved/borrowed copies,
+                // but omits overdue ones. Compensate only that transition, atomically.
+                if ("vencido".equals(anterior)) {
+                    try (PreparedStatement ps = conn.prepareStatement(
+                            "UPDATE libro SET n_ejemplares = n_ejemplares + 1 WHERE id_libro = ?")) {
+                        ps.setInt(1, idLibro);
+                        if (ps.executeUpdate() != 1) throw new SQLException("No se pudo actualizar el inventario del libro.");
+                    }
+                }
+                conn.commit();
+            } catch (SQLException error) {
+                conn.rollback();
+                throw error;
+            }
         }
         registrarAuditoria(idAdmin, "CAMBIO_ESTADO_PRESTAMO", "prestamo",
                 "Reserva #" + p.getIdReserva() + " -> " + nuevoEstado);
