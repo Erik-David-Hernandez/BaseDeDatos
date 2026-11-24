@@ -10,6 +10,7 @@ import javafx.stage.Stage;
 import javafx.concurrent.Task;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.VBox;
@@ -61,8 +62,9 @@ public class App extends Application {
         alert.setContentText(error.getMessage()
                 + "\nComprueba BIBLIOTECA_DB_USER y BIBLIOTECA_DB_PASSWORD.");
         ButtonType retry = new ButtonType("Reintentar");
-        alert.getButtonTypes().setAll(retry, ButtonType.CLOSE);
-        if (alert.showAndWait().orElse(ButtonType.CLOSE) == retry) checkDatabase(stage);
+        ButtonType close = new ButtonType("Cerrar", ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().setAll(retry, close);
+        if (alert.showAndWait().orElse(close) == retry) checkDatabase(stage);
         else stage.close();
     }
 
