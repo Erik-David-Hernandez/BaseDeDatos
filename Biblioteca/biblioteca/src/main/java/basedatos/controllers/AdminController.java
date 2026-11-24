@@ -26,6 +26,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class AdminController {
 
@@ -57,6 +61,12 @@ public class AdminController {
     @FXML private DatePicker dpPrestamosDesde;
     @FXML private DatePicker dpPrestamosHasta;
     @FXML private Label lblFiltroPrestamos;
+    @FXML private CheckBox chkEstadoReservado;
+    @FXML private CheckBox chkEstadoPrestado;
+    @FXML private CheckBox chkEstadoVencido;
+    @FXML private CheckBox chkEstadoDevuelto;
+    @FXML private CheckBox chkEstadoCancelado;
+    private final Map<CheckBox, String> estadosPrestamo = new LinkedHashMap<>();
     @FXML private HBox panelAccionesPrestamo;
     @FXML private Button btnCancelarPrestamo;
     @FXML private Button btnMarcarPrestado;
@@ -132,6 +142,13 @@ public class AdminController {
         tablaAdminPrestamos.getSelectionModel().selectedItemProperty()
                 .addListener((obs, anterior, seleccionado) -> actualizarAccionesPrestamo(seleccionado));
         actualizarAccionesPrestamo(null);
+        estadosPrestamo.put(chkEstadoReservado, "reservado");
+        estadosPrestamo.put(chkEstadoPrestado, "prestado");
+        estadosPrestamo.put(chkEstadoVencido, "vencido");
+        estadosPrestamo.put(chkEstadoDevuelto, "devuelto");
+        estadosPrestamo.put(chkEstadoCancelado, "cancelado");
+        estadosPrestamo.keySet().forEach(estado -> estado.selectedProperty()
+                .addListener((obs, anterior, nuevo) -> filtrarPrestamos()));
         txtBuscarPrestamos.textProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
         dpPrestamosDesde.valueProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
         dpPrestamosHasta.valueProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
@@ -177,8 +194,10 @@ public class AdminController {
     }
 
     private void filtrarPrestamos() {
+        Set<String> estados = estadosPrestamo.entrySet().stream()
+                .filter(entry -> entry.getKey().isSelected()).map(Map.Entry::getValue).collect(Collectors.toSet());
         prestamosFiltrados.setPredicate(p -> FiltroPrestamos.coincide(p, txtBuscarPrestamos.getText(),
-                dpPrestamosDesde.getValue(), dpPrestamosHasta.getValue()));
+                dpPrestamosDesde.getValue(), dpPrestamosHasta.getValue(), estados));
         if (dpPrestamosDesde.getValue() != null && dpPrestamosHasta.getValue() != null
                 && dpPrestamosDesde.getValue().isAfter(dpPrestamosHasta.getValue())) {
             lblFiltroPrestamos.setText("La fecha desde debe ser anterior o igual a hasta.");
@@ -207,6 +226,7 @@ public class AdminController {
         txtBuscarPrestamos.clear();
         dpPrestamosDesde.setValue(null);
         dpPrestamosHasta.setValue(null);
+        estadosPrestamo.keySet().forEach(estado -> estado.setSelected(true));
     }
 
     private void editarLibro(Libro libro) {

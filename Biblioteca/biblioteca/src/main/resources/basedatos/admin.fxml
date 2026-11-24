@@ -74,6 +74,14 @@
             <Tab text="Préstamos y Reservas">
                 <VBox spacing="10" style="-fx-padding: 10;">
                     <TextField fx:id="txtBuscarPrestamos" promptText="Buscar por nombre del lector, correo o título del libro"/>
+                    <HBox spacing="12" alignment="CENTER_LEFT">
+                        <Label text="Estados:"/>
+                        <CheckBox fx:id="chkEstadoReservado" text="Reservado" selected="true"/>
+                        <CheckBox fx:id="chkEstadoPrestado" text="Prestado" selected="true"/>
+                        <CheckBox fx:id="chkEstadoVencido" text="Vencido" selected="true"/>
+                        <CheckBox fx:id="chkEstadoDevuelto" text="Devuelto" selected="true"/>
+                        <CheckBox fx:id="chkEstadoCancelado" text="Cancelado" selected="true"/>
+                    </HBox>
                     <HBox spacing="8" alignment="CENTER_LEFT">
                         <Label text="Inicio desde:"/>
                         <DatePicker fx:id="dpPrestamosDesde" prefWidth="150"/>
