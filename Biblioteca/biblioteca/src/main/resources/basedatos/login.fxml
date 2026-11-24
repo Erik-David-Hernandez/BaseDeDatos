@@ -24,8 +24,5 @@
             <Button text="Iniciar Sesión" onAction="#iniciarSesion" defaultButton="true" prefWidth="150"/>
             <Button text="Crear Cuenta" onAction="#irARegistro" prefWidth="150" styleClass="button-success"/>
         </HBox>
-
-        <Label text="Admin prueba: carlos.gomez@email.com | Pass: 123456" style="-fx-font-size: 11px; -fx-text-fill: gray;"/>
-        <Label text="Lector prueba: juan.perez@email.com | Pass: 123456" style="-fx-font-size: 11px; -fx-text-fill: gray;"/>
     </VBox>
 </VBox>
