@@ -40,4 +40,11 @@ public class Prestamo {
     public String getFechaInicioTexto() { return fechaInicio != null ? fechaInicio.format(FMT) : ""; }
     public String getFechaFinTexto() { return fechaFin != null ? fechaFin.format(FMT) : ""; }
     public String getEstado() { return estado; }
+
+    public boolean puedeCambiarA(String nuevoEstado) {
+        return ("reservado".equals(estado)
+                && ("prestado".equals(nuevoEstado) || "cancelado".equals(nuevoEstado)))
+                || (("prestado".equals(estado) || "vencido".equals(estado))
+                && ("devuelto".equals(nuevoEstado) || "cancelado".equals(nuevoEstado)));
+    }
 }

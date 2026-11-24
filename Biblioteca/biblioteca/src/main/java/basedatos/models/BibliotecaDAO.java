@@ -337,11 +337,7 @@ public class BibliotecaDAO {
 
     public static void cambiarEstadoPrestamo(Prestamo p, String nuevoEstado, int idAdmin) throws SQLException {
         String anterior = p.getEstado();
-        boolean permitido = ("reservado".equals(anterior)
-                && ("prestado".equals(nuevoEstado) || "cancelado".equals(nuevoEstado)))
-                || (("prestado".equals(anterior) || "vencido".equals(anterior))
-                && ("devuelto".equals(nuevoEstado) || "cancelado".equals(nuevoEstado)));
-        if (!permitido) {
+        if (!p.puedeCambiarA(nuevoEstado)) {
             throw new SQLException("No se puede cambiar un préstamo de '" + anterior + "' a '" + nuevoEstado + "'.");
         }
         String sql = "UPDATE prestamo SET estado = ?, fecha_devolucion_real = ? "

@@ -19,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.Node;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -56,6 +57,10 @@ public class AdminController {
     @FXML private DatePicker dpPrestamosDesde;
     @FXML private DatePicker dpPrestamosHasta;
     @FXML private Label lblFiltroPrestamos;
+    @FXML private HBox panelAccionesPrestamo;
+    @FXML private Button btnCancelarPrestamo;
+    @FXML private Button btnMarcarPrestado;
+    @FXML private Button btnMarcarDevuelto;
     private final ObservableList<Prestamo> prestamos = FXCollections.observableArrayList();
     private final FilteredList<Prestamo> prestamosFiltrados = new FilteredList<>(prestamos);
     @FXML private TableView<Prestamo> tablaAdminPrestamos;
@@ -124,6 +129,9 @@ public class AdminController {
         SortedList<Prestamo> ordenados = new SortedList<>(prestamosFiltrados);
         ordenados.comparatorProperty().bind(tablaAdminPrestamos.comparatorProperty());
         tablaAdminPrestamos.setItems(ordenados);
+        tablaAdminPrestamos.getSelectionModel().selectedItemProperty()
+                .addListener((obs, anterior, seleccionado) -> actualizarAccionesPrestamo(seleccionado));
+        actualizarAccionesPrestamo(null);
         txtBuscarPrestamos.textProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
         dpPrestamosDesde.valueProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
         dpPrestamosHasta.valueProperty().addListener((obs, anterior, nuevo) -> filtrarPrestamos());
@@ -177,6 +185,21 @@ public class AdminController {
         } else {
             lblFiltroPrestamos.setText(prestamosFiltrados.size() + " de " + prestamos.size() + " préstamos");
         }
+    }
+
+    private void actualizarAccionesPrestamo(Prestamo seleccionado) {
+        boolean cancelar = seleccionado != null && seleccionado.puedeCambiarA("cancelado");
+        boolean prestar = seleccionado != null && seleccionado.puedeCambiarA("prestado");
+        boolean devolver = seleccionado != null && seleccionado.puedeCambiarA("devuelto");
+        mostrarControl(btnCancelarPrestamo, cancelar);
+        mostrarControl(btnMarcarPrestado, prestar);
+        mostrarControl(btnMarcarDevuelto, devolver);
+        mostrarControl(panelAccionesPrestamo, cancelar || prestar || devolver);
+    }
+
+    private static void mostrarControl(Node control, boolean mostrar) {
+        control.setVisible(mostrar);
+        control.setManaged(mostrar);
     }
 
     @FXML

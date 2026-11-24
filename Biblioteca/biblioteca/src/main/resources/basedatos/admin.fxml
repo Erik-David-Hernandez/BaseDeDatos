@@ -92,10 +92,10 @@
                             <TableColumn text="Estado" fx:id="colPresEstado" prefWidth="110"/>
                         </columns>
                     </TableView>
-                    <HBox spacing="10" alignment="CENTER_RIGHT">
-                        <Button text="Cancelar préstamo" onAction="#cancelarPrestamo" styleClass="button-danger"/>
-                        <Button text="Marcar como Prestado (Entregado)" onAction="#marcarPrestado"/>
-                        <Button text="Marcar como Devuelto" onAction="#marcarDevuelto" styleClass="button-success"/>
+                    <HBox fx:id="panelAccionesPrestamo" spacing="10" alignment="CENTER_RIGHT" visible="false" managed="false">
+                        <Button fx:id="btnCancelarPrestamo" text="Cancelar préstamo" onAction="#cancelarPrestamo" styleClass="button-danger"/>
+                        <Button fx:id="btnMarcarPrestado" text="Marcar como Prestado (Entregado)" onAction="#marcarPrestado"/>
+                        <Button fx:id="btnMarcarDevuelto" text="Marcar como Devuelto" onAction="#marcarDevuelto" styleClass="button-success"/>
                     </HBox>
                 </VBox>
             </Tab>
