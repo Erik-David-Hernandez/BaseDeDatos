@@ -9,7 +9,7 @@
     <top>
         <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 0 0 10 0;">
             <Label fx:id="lblAdmin" text="Panel de Administración" style="-fx-font-size: 17px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
-            <Button text="Actualizar Datos" onAction="#recargarTodo"/>
+            <Button text="Recargar datos" onAction="#recargarTodo">
             <Button text="Cerrar Sesión" onAction="#cerrarSesion" styleClass="button-danger"/>
         </HBox>
     </top>
@@ -65,12 +65,24 @@
                             <TableColumn text="Ejemplares" fx:id="colLibEjemplares" prefWidth="90"/>
                         </columns>
                     </TableView>
+                    <HBox alignment="CENTER_RIGHT">
+                        <Button text="Editar libro seleccionado" onAction="#editarLibro"/>
+                    </HBox>
                 </VBox>
             </Tab>
 
             <!-- TAB 2: GESTIÓN DE PRÉSTAMOS -->
             <Tab text="Préstamos y Reservas">
                 <VBox spacing="10" style="-fx-padding: 10;">
+                    <TextField fx:id="txtBuscarPrestamos" promptText="Buscar por nombre del lector, correo o título del libro"/>
+                    <HBox spacing="8" alignment="CENTER_LEFT">
+                        <Label text="Inicio desde:"/>
+                        <DatePicker fx:id="dpPrestamosDesde" prefWidth="150"/>
+                        <Label text="hasta:"/>
+                        <DatePicker fx:id="dpPrestamosHasta" prefWidth="150"/>
+                        <Button text="Limpiar filtros" onAction="#limpiarFiltrosPrestamos"/>
+                        <Label fx:id="lblFiltroPrestamos" wrapText="true"/>
+                    </HBox>
                     <TableView fx:id="tablaAdminPrestamos" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn text="ID" fx:id="colPresId" prefWidth="60"/>
@@ -82,6 +94,7 @@
                         </columns>
                     </TableView>
                     <HBox spacing="10" alignment="CENTER_RIGHT">
+                        <Button text="Cancelar préstamo" onAction="#cancelarPrestamo" styleClass="button-danger"/>
                         <Button text="Marcar como Prestado (Entregado)" onAction="#marcarPrestado"/>
                         <Button text="Marcar como Devuelto" onAction="#marcarDevuelto" styleClass="button-success"/>
                     </HBox>
