@@ -64,15 +64,15 @@ final class DatabaseSetup {
         // jpackage expands $APPDIR to the installed application payload directory.
         String appDirectory = System.getProperty("biblioteca.app.dir");
         if (appDirectory != null && !appDirectory.isBlank()) {
-            Path script = Paths.get(appDirectory).resolve("setup-postgresql.sh");
+            Path script = Paths.get(appDirectory).resolve("database/setup-postgresql.sh");
             if (Files.isRegularFile(script)) return script;
             throw new IOException("La instalación no incluye el script: " + script);
         }
         for (Path dir = Paths.get("").toAbsolutePath(); dir != null; dir = dir.getParent()) {
-            Path script = dir.resolve("setup-postgresql.sh");
+            Path script = dir.resolve("database/setup-postgresql.sh");
             if (Files.isRegularFile(script)) return script;
         }
-        throw new IOException("No se encontró setup-postgresql.sh. Ejecuta desde el proyecto "
+        throw new IOException("No se encontró database/setup-postgresql.sh. Ejecuta desde el proyecto "
                 + "o configura BIBLIOTECA_SETUP_SCRIPT con su ruta absoluta.");
     }
 

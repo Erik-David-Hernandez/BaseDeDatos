@@ -95,7 +95,7 @@
                                             <directory>${project.basedir}/../..</directory>
                                             <filtering>false</filtering>
                                             <includes>
-                                                <include>setup-postgresql.sh</include>
+                                                <include>database/setup-postgresql.sh</include>
                                                 <include>database/biblioteca_virtual.sql</include>
                                             </includes>
                                         </resource>

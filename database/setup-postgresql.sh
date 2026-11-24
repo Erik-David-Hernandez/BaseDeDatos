@@ -3,13 +3,13 @@
 set -euo pipefail
 
 fail() { printf 'Error: %s\n' "$*" >&2; exit 1; }
-root_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-sql_file="$root_dir/database/biblioteca_virtual.sql"
+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+sql_file="$script_dir/biblioteca_virtual.sql"
 db_name=Biblioteca_virtual
 app_mode=false
 [[ -r "$sql_file" ]] || fail "SQL file not found: $sql_file"
 [[ ${1:-} != --help ]] || {
-    printf 'Usage: bash setup-postgresql.sh [--app]\n--app also provisions the app login and database permissions.\nSupports Debian/Ubuntu, Arch/CachyOS, macOS (Homebrew), and Windows (Git Bash + winget).\n'
+    printf 'Usage: bash database/setup-postgresql.sh [--app]\n--app also provisions the app login and database permissions.\nSupports Debian/Ubuntu, Arch/CachyOS, macOS (Homebrew), and Windows (Git Bash + winget).\n'
     exit 0
 }
 if [[ $# == 1 && $1 == --app ]]; then app_mode=true;
