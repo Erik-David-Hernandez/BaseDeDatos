@@ -27,27 +27,11 @@ public final class DatabaseSetup {
         }
 
         Path script = findScript();
-        ProcessBuilder builder = new ProcessBuilder(findBash(), script.toString(), "--app");
-        builder.directory(script.getParent().toFile());
-        builder.inheritIO();
-        builder.environment().put("BIBLIOTECA_DB_USER", ConexionDB.USER);
-        builder.environment().put("BIBLIOTECA_DB_PASSWORD", ConexionDB.PASSWORD);
-        // Windows administrator authentication is separate from the app account.
-        builder.environment().put("PGPASSWORD",
-                System.getenv().getOrDefault("POSTGRES_ADMIN_PASSWORD", "admin"));
-        Process setup = builder.start();
-        int result;
-        try {
-            result = setup.waitFor();
-        } catch (InterruptedException error) {
-            setup.destroy();
-            Thread.currentThread().interrupt();
-            throw error;
-        }
+        int result = SetupTerminal.run(script, findBash());
         if (result != 0) {
             throw new IOException("La configuración de PostgreSQL falló (código " + result
-                    + "). Revisa la terminal. Para instalar, abre la aplicación desde una terminal; "
-                    + "en Windows completa el instalador y configura POSTGRES_ADMIN_PASSWORD.");
+                    + "). Revisa la ventana de configuración. En Windows comprueba "
+                    + "POSTGRES_ADMIN_PASSWORD si falló la autenticación del administrador.");
         }
         try (Connection ignored = ConexionDB.getConnection()) {
             // Verify the exact credentials the rest of the app will use.
