@@ -21,6 +21,7 @@ import javafx.scene.layout.GridPane;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -100,6 +101,15 @@ public class AdminController {
         colLibAutor.setCellValueFactory(new PropertyValueFactory<>("nombreAutor"));
         colLibGenero.setCellValueFactory(new PropertyValueFactory<>("nombreGenero"));
         colLibEjemplares.setCellValueFactory(new PropertyValueFactory<>("nEjemplares"));
+        tablaAdminLibros.setRowFactory(tabla -> {
+            TableRow<Libro> fila = new TableRow<>();
+            fila.setOnMouseClicked(event -> {
+                if (event.getButton() == MouseButton.PRIMARY && event.getClickCount() == 2 && !fila.isEmpty()) {
+                    editarLibro(fila.getItem());
+                }
+            });
+            return fila;
+        });
 
         // Configurar columnas Préstamos
         colPresId.setCellValueFactory(new PropertyValueFactory<>("idReserva"));
@@ -173,13 +183,7 @@ public class AdminController {
         dpPrestamosHasta.setValue(null);
     }
 
-    @FXML
-    private void editarLibro() {
-        Libro libro = tablaAdminLibros.getSelectionModel().getSelectedItem();
-        if (libro == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Selección requerida", "Selecciona el libro que deseas editar.");
-            return;
-        }
+    private void editarLibro(Libro libro) {
         TextField titulo = new TextField(libro.getTitulo());
         TextField isbn = new TextField(libro.getIsbn());
         TextField seccion = new TextField(libro.getCodigoSeccion());

@@ -55,6 +55,7 @@
                         </HBox>
                     </HBox>
 
+                    <Label text="Doble clic en un libro para editarlo."/>
                     <TableView fx:id="tablaAdminLibros" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn text="ID" fx:id="colLibId" prefWidth="55"/>
@@ -65,9 +66,6 @@
                             <TableColumn text="Ejemplares" fx:id="colLibEjemplares" prefWidth="90"/>
                         </columns>
                     </TableView>
-                    <HBox alignment="CENTER_RIGHT">
-                        <Button text="Editar libro seleccionado" onAction="#editarLibro"/>
-                    </HBox>
                 </VBox>
             </Tab>
 
