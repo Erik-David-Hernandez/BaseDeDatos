@@ -49,7 +49,7 @@ case $(uname -s) in
                 ;;
             *arch*|*cachyos*)
                 if ! command -v psql >/dev/null || ! command -v initdb >/dev/null; then
-                    as_root pacman -Syu --needed --noconfirm postgresql
+                    as_root pacman -S --needed --noconfirm postgresql
                 fi
                 if [[ ! -f /var/lib/postgres/data/PG_VERSION ]]; then
                     as_postgres initdb -D /var/lib/postgres/data --auth-local=peer --auth-host=scram-sha-256
