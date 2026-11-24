@@ -2,6 +2,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.Insets?>
+<?import basedatos.controllers.BuscadorAutores?>
 
 <BorderPane xmlns="http://javafx.com/javafx/11" xmlns:fx="http://javafx.com/fxml/1" fx:controller="basedatos.controllers.AdminController">
     <padding><Insets top="15" right="20" bottom="15" left="20"/></padding>
@@ -29,7 +30,7 @@
                                 <TextField fx:id="txtSeccionLibro" promptText="Sección (SEC-...)" prefWidth="115"/>
                             </HBox>
                             <HBox spacing="8" alignment="CENTER_LEFT">
-                                <ComboBox fx:id="cbAutorLibro" promptText="Seleccionar Autor" prefWidth="180"/>
+                                <BuscadorAutores fx:id="buscadorAutorLibro" prefWidth="180"/>
                                 <ComboBox fx:id="cbGeneroLibro" promptText="Seleccionar Género" prefWidth="170"/>
                                 <Label text="Ejemplares:"/>
                                 <Spinner fx:id="spEjemplaresLibro" prefWidth="70"/>

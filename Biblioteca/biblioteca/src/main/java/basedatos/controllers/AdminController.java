@@ -36,7 +36,7 @@ public class AdminController {
     @FXML private TextField txtSeccionLibro;
     @FXML private Spinner<Integer> spEjemplaresLibro;
     @FXML private ComboBox<Genero> cbGeneroLibro;
-    @FXML private ComboBox<Autor> cbAutorLibro;
+    @FXML private BuscadorAutores buscadorAutorLibro;
 
     @FXML private TextField txtNuevoGenero;
     @FXML private TextField txtAutorNombres;
@@ -157,7 +157,7 @@ public class AdminController {
     private void recargarTodo() {
         try {
             cbGeneroLibro.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerGeneros()));
-            cbAutorLibro.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerAutores()));
+            buscadorAutorLibro.setAutores(BibliotecaDAO.obtenerAutores());
             tablaAdminLibros.setItems(FXCollections.observableArrayList(BibliotecaDAO.buscarLibros("")));
             prestamos.setAll(BibliotecaDAO.obtenerTodosPrestamos());
             filtrarPrestamos();
@@ -190,9 +190,10 @@ public class AdminController {
         TextField titulo = new TextField(libro.getTitulo());
         TextField isbn = new TextField(libro.getIsbn());
         TextField seccion = new TextField(libro.getCodigoSeccion());
-        ComboBox<Autor> autor = new ComboBox<>(FXCollections.observableArrayList(cbAutorLibro.getItems()));
+        BuscadorAutores autor = new BuscadorAutores();
+        autor.setAutores(buscadorAutorLibro.getAutores());
         ComboBox<Genero> genero = new ComboBox<>(FXCollections.observableArrayList(cbGeneroLibro.getItems()));
-        autor.getItems().stream().filter(a -> a.getIdAutor() == libro.getIdAutor()).findFirst().ifPresent(autor::setValue);
+        autor.getAutores().stream().filter(a -> a.getIdAutor() == libro.getIdAutor()).findFirst().ifPresent(autor::setAutor);
         genero.getItems().stream().filter(g -> g.getIdGenero() == libro.getIdGenero()).findFirst().ifPresent(genero::setValue);
         Spinner<Integer> disponibles = new Spinner<>(0, Integer.MAX_VALUE, libro.getNEjemplares());
         Label error = new Label();
@@ -225,13 +226,13 @@ public class AdminController {
         dialog.getDialogPane().lookupButton(guardar).addEventFilter(ActionEvent.ACTION, event -> {
             event.consume();
             if (titulo.getText().trim().isEmpty() || isbn.getText().trim().isEmpty()
-                    || seccion.getText().trim().isEmpty() || autor.getValue() == null || genero.getValue() == null) {
-                error.setText("Completa todos los datos del libro.");
+                    || seccion.getText().trim().isEmpty() || autor.getAutor() == null || genero.getValue() == null) {
+                error.setText("Completa todos los datos y selecciona un autor de los resultados.");
                 return;
             }
             try {
                 BibliotecaDAO.actualizarLibro(libro, titulo.getText(), isbn.getText(), seccion.getText(),
-                        disponibles.getValue(), genero.getValue().getIdGenero(), autor.getValue().getIdAutor(),
+                        disponibles.getValue(), genero.getValue().getIdGenero(), autor.getAutor().getIdAutor(),
                         Session.getUsuarioActual().getIdUsuario());
                 dialog.close();
                 recargarTodo();
@@ -248,11 +249,11 @@ public class AdminController {
         String isbn = txtIsbnLibro.getText().trim();
         String seccion = txtSeccionLibro.getText().trim();
         Genero gen = cbGeneroLibro.getValue();
-        Autor aut = cbAutorLibro.getValue();
+        Autor aut = buscadorAutorLibro.getAutor();
         int ejemplares = spEjemplaresLibro.getValue();
 
         if (titulo.isEmpty() || isbn.isEmpty() || seccion.isEmpty() || gen == null || aut == null) {
-            mostrarAlerta(Alert.AlertType.WARNING, "Campos incompletos", "Completa todos los datos del libro.");
+            mostrarAlerta(Alert.AlertType.WARNING, "Campos incompletos", "Completa todos los datos y selecciona un autor de los resultados.");
             return;
         }
         try {
@@ -261,6 +262,7 @@ public class AdminController {
             txtTituloLibro.clear();
             txtIsbnLibro.clear();
             txtSeccionLibro.clear();
+            buscadorAutorLibro.setAutor(null);
             recargarTodo();
             mostrarAlerta(Alert.AlertType.INFORMATION, "Libro Agregado", "El libro se registró correctamente con ID autogenerado.");
         } catch (SQLException e) {
