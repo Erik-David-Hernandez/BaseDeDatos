@@ -1,14 +1,8 @@
--- ============================================================================
--- BASE DE DATOS: Biblioteca_virtual
--- Práctica 3 + Extensiones para Requerimientos Funcionales y No Funcionales
--- ============================================================================
-
--- CREATE DATABASE Biblioteca_virtual;
--- \c Biblioteca_virtual
+CREATE DATABASE "Biblioteca_virtual";
+\c "Biblioteca_virtual"
 
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
--- 1. TABLA USUARIO (Incluye salt para hashing seguro - RNF1)
 CREATE TABLE IF NOT EXISTS usuario (
     id_usuario SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -20,13 +14,11 @@ CREATE TABLE IF NOT EXISTS usuario (
     fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- 2. TABLA GENERO
 CREATE TABLE IF NOT EXISTS genero (
     id_genero SERIAL PRIMARY KEY,
     nombre VARCHAR(50) UNIQUE NOT NULL
 );
 
--- 3. TABLA AUTOR
 CREATE TABLE IF NOT EXISTS autor (
     id_autor SERIAL PRIMARY KEY,
     nombres VARCHAR(80) NOT NULL,
@@ -34,7 +26,6 @@ CREATE TABLE IF NOT EXISTS autor (
     apellido_m VARCHAR(50) NULL
 );
 
--- 4. TABLA LIBRO
 CREATE TABLE IF NOT EXISTS libro (
     id_libro SERIAL PRIMARY KEY,
     titulo VARCHAR(200) NOT NULL,
@@ -47,7 +38,7 @@ CREATE TABLE IF NOT EXISTS libro (
     CONSTRAINT fk_libro_autor FOREIGN KEY (id_autor) REFERENCES autor(id_autor) ON DELETE RESTRICT
 );
 
--- 5. TABLA PRESTAMO (Soporta 'reservado', 'prestado', 'devuelto', 'vencido', 'cancelado')
+-- Soporta 'reservado', 'prestado', 'devuelto', 'vencido', 'cancelado'
 CREATE TABLE IF NOT EXISTS prestamo (
     id_reserva SERIAL PRIMARY KEY,
     id_usuario INTEGER NOT NULL,
@@ -62,7 +53,6 @@ CREATE TABLE IF NOT EXISTS prestamo (
     CONSTRAINT fk_prestamo_libro FOREIGN KEY (id_libro) REFERENCES libro(id_libro) ON DELETE CASCADE
 );
 
--- 6. TABLA AUDITORIA (RNF13: Seguimiento de actividad de usuarios y administradores)
 CREATE TABLE IF NOT EXISTS auditoria (
     id_auditoria SERIAL PRIMARY KEY,
     id_usuario INTEGER NULL,
@@ -73,7 +63,6 @@ CREATE TABLE IF NOT EXISTS auditoria (
     CONSTRAINT fk_auditoria_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE SET NULL
 );
 
--- 7. TABLA NOTIFICACION_CORREO (RF6 y RNF9: Registro de correos enviados)
 CREATE TABLE IF NOT EXISTS notificacion_correo (
     id_notificacion SERIAL PRIMARY KEY,
     id_usuario INTEGER NOT NULL,
@@ -85,7 +74,7 @@ CREATE TABLE IF NOT EXISTS notificacion_correo (
 );
 
 -- ============================================================================
--- ÍNDICES (Práctica 3 + Optimización)
+-- ÍNDICES 
 -- ============================================================================
 CREATE INDEX IF NOT EXISTS idx_libro_id_genero ON libro(id_genero);
 CREATE INDEX IF NOT EXISTS idx_libro_id_autor ON libro(id_autor);
@@ -138,8 +127,7 @@ AFTER INSERT OR UPDATE OF estado ON prestamo
 FOR EACH ROW EXECUTE FUNCTION fn_actualizar_inventario_prestamo();
 
 -- ============================================================================
--- DATOS INICIALES (Práctica 3)
--- Nota: Contraseña para todos los usuarios de prueba abajo es: 123456
+-- DATOS INICIALES 
 -- ============================================================================
 INSERT INTO genero (nombre) VALUES
 ('Ficción Realista'), ('Ciencia Ficción'), ('Fantasía'), ('Novela Negra y Policial'),
