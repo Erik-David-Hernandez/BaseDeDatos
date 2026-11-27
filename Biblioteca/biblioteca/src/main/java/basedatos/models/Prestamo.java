@@ -41,6 +41,10 @@ public class Prestamo {
     public String getFechaFinTexto() { return fechaFin != null ? fechaFin.format(FMT) : ""; }
     public String getEstado() { return estado; }
 
+    public boolean puedeCancelarReserva(LocalDateTime ahora) {
+        return "reservado".equals(estado) && fechaInicio != null && fechaInicio.isAfter(ahora);
+    }
+
     public boolean puedeCambiarA(String nuevoEstado) {
         return ("reservado".equals(estado)
                 && ("prestado".equals(nuevoEstado) || "cancelado".equals(nuevoEstado)))

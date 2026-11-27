@@ -57,7 +57,8 @@
                         </columns>
                     </TableView>
                     <HBox alignment="CENTER_RIGHT">
-                        <Button text="Cancelar Reserva Seleccionada" onAction="#cancelarReserva" styleClass="button-danger"/>
+                        <Label text="Solo se puede cancelar antes de la fecha de recogida." HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button fx:id="btnCancelarReserva" text="Cancelar Reserva Seleccionada" onAction="#cancelarReserva" styleClass="button-danger" disable="true"/>
                     </HBox>
                 </VBox>
             </Tab>

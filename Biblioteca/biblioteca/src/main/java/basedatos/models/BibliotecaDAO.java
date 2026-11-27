@@ -169,12 +169,15 @@ public class BibliotecaDAO {
         if (!"reservado".equalsIgnoreCase(prestamo.getEstado())) {
             throw new SQLException("Solo se pueden cancelar préstamos en estado 'reservado'.");
         }
-        String sql = "UPDATE prestamo SET estado = 'cancelado' WHERE id_reserva = ? AND id_usuario = ?";
+        String sql = "UPDATE prestamo SET estado = 'cancelado' WHERE id_reserva = ? AND id_usuario = ? "
+                + "AND estado = 'reservado' AND fecha_inicio > CURRENT_TIMESTAMP";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, prestamo.getIdReserva());
             ps.setInt(2, usuario.getIdUsuario());
-            ps.executeUpdate();
+            if (ps.executeUpdate() != 1) {
+                throw new SQLException("Solo puedes cancelar una reserva propia antes de su recogida y mientras siga reservada. Recarga el historial.");
+            }
         }
         registrarAuditoria(usuario.getIdUsuario(), "CANCELAR_RESERVA", "prestamo", "Canceló reserva ID: " + prestamo.getIdReserva());
     }
