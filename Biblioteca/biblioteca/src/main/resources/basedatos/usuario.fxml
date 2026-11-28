@@ -54,7 +54,7 @@
                             <TableColumn text="Libro" fx:id="colHistLibro" prefWidth="240"/>
                             <TableColumn text="Fecha Inicio" fx:id="colHistInicio" prefWidth="140"/>
                             <TableColumn text="Fecha límite" fx:id="colHistFin" prefWidth="140"/>
-                            <TableColumn text="Devolución real" fx:id="colHistDevolucionReal" prefWidth="140"/>
+                            <TableColumn text="Fecha de devolución" fx:id="colHistDevolucionReal" prefWidth="140"/>
                             <TableColumn text="Estado" fx:id="colHistEstado" prefWidth="120"/>
                         </columns>
                     </TableView>
