@@ -12,7 +12,7 @@
 
         <VBox spacing="5" alignment="CENTER_LEFT">
             <Label text="Correo electrónico:"/>
-            <TextField fx:id="txtUsuario" promptText="ej. carlos.gomez@email.com" maxWidth="Infinity"/>
+            <TextField fx:id="txtUsuario" promptText="ejemplo@email.com" maxWidth="Infinity"/>
         </VBox>
 
         <VBox spacing="5" alignment="CENTER_LEFT">
@@ -20,9 +20,10 @@
             <PasswordField fx:id="txtPassword" promptText="••••••" maxWidth="Infinity"/>
         </VBox>
 
-        <HBox spacing="10" alignment="CENTER">
-            <Button text="Iniciar Sesión" onAction="#iniciarSesion" defaultButton="true" prefWidth="150" styleClass="button-outline"/>
-            <Button text="Crear Cuenta" onAction="#irARegistro" prefWidth="150"/>
-        </HBox>
+        <VBox spacing="12" alignment="CENTER" maxWidth="Infinity">
+            <Button text="Iniciar Sesión" onAction="#iniciarSesion" defaultButton="true" maxWidth="Infinity" styleClass="button-outline"/>
+            <Separator orientation="HORIZONTAL" maxWidth="Infinity"/>
+            <Button text="Crear Cuenta" onAction="#irARegistro" maxWidth="Infinity"/>
+        </VBox>
     </VBox>
 </VBox>
