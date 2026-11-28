@@ -17,6 +17,34 @@
     -fx-background-color: #1565C0;
 }
 
+.button-outline {
+    -fx-background-color: white;
+    -fx-text-fill: #1976D2;
+    -fx-border-color: #1976D2;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+}
+
+.button-outline:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+.button-back {
+    -fx-background-color: transparent;
+    -fx-text-fill: #1976D2;
+    -fx-padding: 0;
+    -fx-font-size: 26px;
+}
+
+.button-back:hover {
+    -fx-background-color: #e3f2fd;
+}
+
+.required-mark {
+    -fx-text-fill: #D32F2F;
+    -fx-font-weight: bold;
+}
+
 .button-danger {
     -fx-background-color: #D32F2F;
 }

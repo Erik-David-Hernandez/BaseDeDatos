@@ -21,8 +21,8 @@
         </VBox>
 
         <HBox spacing="10" alignment="CENTER">
-            <Button text="Iniciar Sesión" onAction="#iniciarSesion" defaultButton="true" prefWidth="150"/>
-            <Button text="Crear Cuenta" onAction="#irARegistro" prefWidth="150" styleClass="button-success"/>
+            <Button text="Iniciar Sesión" onAction="#iniciarSesion" defaultButton="true" prefWidth="150" styleClass="button-outline"/>
+            <Button text="Crear Cuenta" onAction="#irARegistro" prefWidth="150"/>
         </HBox>
     </VBox>
 </VBox>

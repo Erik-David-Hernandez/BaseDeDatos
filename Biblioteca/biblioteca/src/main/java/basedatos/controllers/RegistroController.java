@@ -4,10 +4,12 @@ import basedatos.App;
 import basedatos.models.BibliotecaDAO;
 
 import javafx.fxml.FXML;
+import javafx.beans.binding.Bindings;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Button;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -18,6 +20,17 @@ public class RegistroController {
     @FXML private PasswordField txtPassword;
     @FXML private PasswordField txtConfirmarPassword;
     @FXML private CheckBox chkPrivacidad;
+    @FXML private Button btnRegistrar;
+
+    @FXML
+    public void initialize() {
+        btnRegistrar.disableProperty().bind(Bindings.createBooleanBinding(
+                () -> txtNombre.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()
+                        || txtPassword.getText().isEmpty() || txtConfirmarPassword.getText().isEmpty()
+                        || !chkPrivacidad.isSelected(),
+                txtNombre.textProperty(), txtEmail.textProperty(), txtPassword.textProperty(),
+                txtConfirmarPassword.textProperty(), chkPrivacidad.selectedProperty()));
+    }
 
     @FXML
     private void registrarUsuario() {

@@ -7,33 +7,39 @@
     <padding><Insets bottom="25.0" left="25.0" right="25.0" top="25.0"/></padding>
 
     <VBox alignment="CENTER" spacing="10.0" maxWidth="400" styleClass="card">
-        <Label text="Registro de Nuevo Lector" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+        <StackPane maxWidth="Infinity">
+            <Label text="Registro de Nuevo Lector" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #1976D2;"/>
+            <Button text="‹" onAction="#volverLogin" styleClass="button-back" prefWidth="32" minWidth="32" prefHeight="32"
+                    StackPane.alignment="CENTER_LEFT" accessibleText="Volver al inicio de sesión"/>
+        </StackPane>
 
         <VBox spacing="4" alignment="CENTER_LEFT">
-            <Label text="Nombre completo:"/>
+            <HBox spacing="3"><Label text="Nombre completo:"/><Label text="*" styleClass="required-mark" accessibleText="Obligatorio"/></HBox>
             <TextField fx:id="txtNombre" promptText="Nombre y apellidos" maxWidth="Infinity"/>
         </VBox>
 
         <VBox spacing="4" alignment="CENTER_LEFT">
-            <Label text="Correo electrónico:"/>
+            <HBox spacing="3"><Label text="Correo electrónico:"/><Label text="*" styleClass="required-mark" accessibleText="Obligatorio"/></HBox>
             <TextField fx:id="txtEmail" promptText="correo@ejemplo.com" maxWidth="Infinity"/>
         </VBox>
 
         <VBox spacing="4" alignment="CENTER_LEFT">
-            <Label text="Contraseña (mín. 6 caracteres):"/>
+            <HBox spacing="3"><Label text="Contraseña (mín. 6 caracteres):"/><Label text="*" styleClass="required-mark" accessibleText="Obligatorio"/></HBox>
             <PasswordField fx:id="txtPassword" maxWidth="Infinity"/>
         </VBox>
 
         <VBox spacing="4" alignment="CENTER_LEFT">
-            <Label text="Confirmar contraseña:"/>
+            <HBox spacing="3"><Label text="Confirmar contraseña:"/><Label text="*" styleClass="required-mark" accessibleText="Obligatorio"/></HBox>
             <PasswordField fx:id="txtConfirmarPassword" maxWidth="Infinity"/>
         </VBox>
 
-        <CheckBox fx:id="chkPrivacidad" text="Acepto el aviso de privacidad y protección de datos (LFPDPPP)" wrapText="true"/>
+        <HBox spacing="4" alignment="CENTER_LEFT">
+            <CheckBox fx:id="chkPrivacidad" text="Acepto el aviso de privacidad y protección de datos (LFPDPPP)" wrapText="true" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+            <Label text="*" styleClass="required-mark" accessibleText="Obligatorio"/>
+        </HBox>
 
         <HBox spacing="10" alignment="CENTER">
-            <Button text="Registrarme" onAction="#registrarUsuario" styleClass="button-success" prefWidth="150"/>
-            <Button text="Volver al Login" onAction="#volverLogin" prefWidth="150"/>
+            <Button fx:id="btnRegistrar" text="Registrarme" onAction="#registrarUsuario" prefWidth="150" disable="true" defaultButton="true"/>
         </HBox>
     </VBox>
 </VBox>
