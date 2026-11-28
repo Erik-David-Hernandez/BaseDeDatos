@@ -170,22 +170,28 @@ INSERT INTO usuario (nombre, email, pswd, salt, rol, activo) VALUES
 ('Roberto Ramos', 'roberto.ramos@email.com', '95f533f8dabec3c236fdb030957824dc1f36efb4fe6428a9f2d79f0d243075f8', 'salt123', 'lector', FALSE)
 ON CONFLICT (email) DO NOTHING;
 
-INSERT INTO libro (titulo, isbn, codigo_seccion, n_ejemplares, id_genero, id_autor) VALUES
-('Cien años de soledad', '978-0307474728', 'SEC-FIC-001', 5, 1, 1),
-('La casa de los espíritus', '978-0525433477', 'SEC-FIC-002', 3, 1, 2),
-('La ciudad y los perros', '978-8420471830', 'SEC-FIC-003', 2, 1, 3),
-('Ficciones', '978-8497593373', 'SEC-ENS-001', 4, 9, 4),
-('Rayuela', '978-8437604572', 'SEC-FIC-004', 3, 1, 5),
-('El laberinto de la soledad', '978-9681603014', 'SEC-ENS-002', 2, 9, 6),
-('La muerte de Artemio Cruz', '978-8437600871', 'SEC-FIC-005', 1, 1, 7),
-('Como agua para chocolate', '978-0385720168', 'SEC-ROM-001', 6, 6, 8),
-('Pedro Páramo', '978-8437604183', 'SEC-FIC-006', 4, 1, 9),
-('El resplandor', '978-0307743657', 'SEC-TER-001', 3, 5, 10),
-('Asesinato en el Orient Express', '978-0062073501', 'SEC-POL-001', 5, 4, 11),
-('Fundación', '978-0553293357', 'SEC-CFI-001', 4, 2, 12),
-('1984', '978-0451524935', 'SEC-CFI-002', 7, 2, 13),
-('Orgullo y prejuicio', '978-0141439518', 'SEC-ROM-002', 3, 6, 14),
-('Harry Potter y la piedra filosofal', '978-8478888566', 'SEC-INF-001', 8, 14, 15)
+-- Formatos de demostración; pueden compartirse entre libros.
+INSERT INTO categoria (nombre) VALUES
+('Impreso'), ('Digital'), ('Audiolibro')
+ON CONFLICT (nombre) DO NOTHING;
+
+-- Asignaciones aleatorias fijadas para que los datos iniciales sean reproducibles.
+INSERT INTO libro (titulo, isbn, codigo_seccion, n_ejemplares, id_genero, id_autor, id_categoria) VALUES
+('Cien años de soledad', '978-0307474728', 'SEC-FIC-001', 5, 1, 1, (SELECT id_categoria FROM categoria WHERE nombre = 'Impreso')),
+('La casa de los espíritus', '978-0525433477', 'SEC-FIC-002', 3, 1, 2, (SELECT id_categoria FROM categoria WHERE nombre = 'Audiolibro')),
+('La ciudad y los perros', '978-8420471830', 'SEC-FIC-003', 2, 1, 3, (SELECT id_categoria FROM categoria WHERE nombre = 'Digital')),
+('Ficciones', '978-8497593373', 'SEC-ENS-001', 4, 9, 4, (SELECT id_categoria FROM categoria WHERE nombre = 'Digital')),
+('Rayuela', '978-8437604572', 'SEC-FIC-004', 3, 1, 5, (SELECT id_categoria FROM categoria WHERE nombre = 'Audiolibro')),
+('El laberinto de la soledad', '978-9681603014', 'SEC-ENS-002', 2, 9, 6, (SELECT id_categoria FROM categoria WHERE nombre = 'Impreso')),
+('La muerte de Artemio Cruz', '978-8437600871', 'SEC-FIC-005', 1, 1, 7, (SELECT id_categoria FROM categoria WHERE nombre = 'Impreso')),
+('Como agua para chocolate', '978-0385720168', 'SEC-ROM-001', 6, 6, 8, (SELECT id_categoria FROM categoria WHERE nombre = 'Digital')),
+('Pedro Páramo', '978-8437604183', 'SEC-FIC-006', 4, 1, 9, (SELECT id_categoria FROM categoria WHERE nombre = 'Digital')),
+('El resplandor', '978-0307743657', 'SEC-TER-001', 3, 5, 10, (SELECT id_categoria FROM categoria WHERE nombre = 'Impreso')),
+('Asesinato en el Orient Express', '978-0062073501', 'SEC-POL-001', 5, 4, 11, (SELECT id_categoria FROM categoria WHERE nombre = 'Digital')),
+('Fundación', '978-0553293357', 'SEC-CFI-001', 4, 2, 12, (SELECT id_categoria FROM categoria WHERE nombre = 'Impreso')),
+('1984', '978-0451524935', 'SEC-CFI-002', 7, 2, 13, (SELECT id_categoria FROM categoria WHERE nombre = 'Impreso')),
+('Orgullo y prejuicio', '978-0141439518', 'SEC-ROM-002', 3, 6, 14, (SELECT id_categoria FROM categoria WHERE nombre = 'Digital')),
+('Harry Potter y la piedra filosofal', '978-8478888566', 'SEC-INF-001', 8, 14, 15, (SELECT id_categoria FROM categoria WHERE nombre = 'Impreso'))
 ON CONFLICT (isbn) DO NOTHING;
 
 INSERT INTO prestamo (id_usuario, id_libro, fecha_inicio, fecha_fin, estado) VALUES
