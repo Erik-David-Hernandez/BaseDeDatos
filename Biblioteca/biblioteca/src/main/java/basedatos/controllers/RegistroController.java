@@ -10,6 +10,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.input.MouseButton;
 import java.io.IOException;
 import java.sql.SQLException;
 
@@ -72,6 +74,11 @@ public class RegistroController {
         } catch (IOException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
         }
+    }
+
+    @FXML
+    private void alternarPrivacidad(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY) chkPrivacidad.fire();
     }
 
     @FXML
