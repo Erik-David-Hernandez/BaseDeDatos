@@ -3,6 +3,7 @@ package basedatos.controllers;
 import basedatos.App;
 import basedatos.models.Auditoria;
 import basedatos.models.Autor;
+import basedatos.models.Categoria;
 import basedatos.models.BibliotecaDAO;
 import basedatos.models.Genero;
 import basedatos.models.Libro;
@@ -41,9 +42,11 @@ public class AdminController {
     @FXML private TextField txtSeccionLibro;
     @FXML private Spinner<Integer> spEjemplaresLibro;
     @FXML private ComboBox<Genero> cbGeneroLibro;
+    @FXML private ComboBox<Categoria> cbCategoriaLibro;
     @FXML private BuscadorAutores buscadorAutorLibro;
 
     @FXML private TextField txtNuevoGenero;
+    @FXML private TextField txtNuevaCategoria;
     @FXML private TextField txtAutorNombres;
     @FXML private TextField txtAutorApellidoP;
     @FXML private TextField txtAutorApellidoM;
@@ -54,6 +57,7 @@ public class AdminController {
     @FXML private TableColumn<Libro, String> colLibIsbn;
     @FXML private TableColumn<Libro, String> colLibAutor;
     @FXML private TableColumn<Libro, String> colLibGenero;
+    @FXML private TableColumn<Libro, String> colLibCategoria;
     @FXML private TableColumn<Libro, Integer> colLibEjemplares;
 
     // Tab 2: Préstamos
@@ -119,6 +123,7 @@ public class AdminController {
         colLibIsbn.setCellValueFactory(new PropertyValueFactory<>("isbn"));
         colLibAutor.setCellValueFactory(new PropertyValueFactory<>("nombreAutor"));
         colLibGenero.setCellValueFactory(new PropertyValueFactory<>("nombreGenero"));
+        colLibCategoria.setCellValueFactory(new PropertyValueFactory<>("nombreCategoria"));
         colLibEjemplares.setCellValueFactory(new PropertyValueFactory<>("nEjemplares"));
         tablaAdminLibros.setRowFactory(tabla -> {
             TableRow<Libro> fila = new TableRow<>();
@@ -184,6 +189,12 @@ public class AdminController {
     private void recargarTodo() {
         try {
             cbGeneroLibro.setItems(FXCollections.observableArrayList(BibliotecaDAO.obtenerGeneros()));
+            int categoriaActual = cbCategoriaLibro.getValue() == null ? 0 : cbCategoriaLibro.getValue().getIdCategoria();
+            ObservableList<Categoria> categorias = FXCollections.observableArrayList(new Categoria(0, "Sin categoría"));
+            categorias.addAll(BibliotecaDAO.obtenerCategorias());
+            cbCategoriaLibro.setItems(categorias);
+            cbCategoriaLibro.setValue(categorias.stream().filter(c -> c.getIdCategoria() == categoriaActual)
+                    .findFirst().orElse(categorias.get(0)));
             buscadorAutorLibro.setAutores(BibliotecaDAO.obtenerAutores());
             tablaAdminLibros.setItems(FXCollections.observableArrayList(BibliotecaDAO.buscarLibros("")));
             prestamos.setAll(BibliotecaDAO.obtenerTodosPrestamos());
@@ -238,8 +249,10 @@ public class AdminController {
         BuscadorAutores autor = new BuscadorAutores();
         autor.setAutores(buscadorAutorLibro.getAutores());
         ComboBox<Genero> genero = new ComboBox<>(FXCollections.observableArrayList(cbGeneroLibro.getItems()));
+        ComboBox<Categoria> categoria = new ComboBox<>(FXCollections.observableArrayList(cbCategoriaLibro.getItems()));
         autor.getAutores().stream().filter(a -> a.getIdAutor() == libro.getIdAutor()).findFirst().ifPresent(autor::setAutor);
         genero.getItems().stream().filter(g -> g.getIdGenero() == libro.getIdGenero()).findFirst().ifPresent(genero::setValue);
+        categoria.getItems().stream().filter(c -> c.getIdCategoria() == libro.getIdCategoria()).findFirst().ifPresent(categoria::setValue);
         Spinner<Integer> disponibles = new Spinner<>(0, Integer.MAX_VALUE, libro.getNEjemplares());
         Label error = new Label();
         error.setWrapText(true);
@@ -253,11 +266,13 @@ public class AdminController {
         form.addRow(2, new Label("Sección:"), seccion);
         form.addRow(3, new Label("Autor:"), autor);
         form.addRow(4, new Label("Género:"), genero);
-        form.addRow(5, new Label("Ejemplares disponibles:"), disponibles);
-        form.add(error, 0, 6, 2, 1);
+        form.addRow(5, new Label("Categoría:"), categoria);
+        form.addRow(6, new Label("Ejemplares disponibles:"), disponibles);
+        form.add(error, 0, 7, 2, 1);
         titulo.setPrefWidth(300);
         autor.setMaxWidth(Double.MAX_VALUE);
         genero.setMaxWidth(Double.MAX_VALUE);
+        categoria.setMaxWidth(Double.MAX_VALUE);
 
         Dialog<Void> dialog = new Dialog<>();
         dialog.initOwner(tablaAdminLibros.getScene().getWindow());
@@ -271,13 +286,14 @@ public class AdminController {
         dialog.getDialogPane().lookupButton(guardar).addEventFilter(ActionEvent.ACTION, event -> {
             event.consume();
             if (titulo.getText().trim().isEmpty() || isbn.getText().trim().isEmpty()
-                    || seccion.getText().trim().isEmpty() || autor.getAutor() == null || genero.getValue() == null) {
+                    || seccion.getText().trim().isEmpty() || autor.getAutor() == null || genero.getValue() == null
+                    || categoria.getValue() == null) {
                 error.setText("Completa todos los datos y selecciona un autor de los resultados.");
                 return;
             }
             try {
                 BibliotecaDAO.actualizarLibro(libro, titulo.getText(), isbn.getText(), seccion.getText(),
-                        disponibles.getValue(), genero.getValue().getIdGenero(), autor.getAutor().getIdAutor(),
+                        disponibles.getValue(), genero.getValue().getIdGenero(), autor.getAutor().getIdAutor(), categoria.getValue().getIdCategoria(),
                         Session.getUsuarioActual().getIdUsuario());
                 dialog.close();
                 recargarTodo();
@@ -294,16 +310,17 @@ public class AdminController {
         String isbn = txtIsbnLibro.getText().trim();
         String seccion = txtSeccionLibro.getText().trim();
         Genero gen = cbGeneroLibro.getValue();
+        Categoria categoria = cbCategoriaLibro.getValue();
         Autor aut = buscadorAutorLibro.getAutor();
         int ejemplares = spEjemplaresLibro.getValue();
 
-        if (titulo.isEmpty() || isbn.isEmpty() || seccion.isEmpty() || gen == null || aut == null) {
+        if (titulo.isEmpty() || isbn.isEmpty() || seccion.isEmpty() || gen == null || aut == null || categoria == null) {
             mostrarAlerta(Alert.AlertType.WARNING, "Campos incompletos", "Completa todos los datos y selecciona un autor de los resultados.");
             return;
         }
         try {
             int idAdmin = Session.getUsuarioActual().getIdUsuario();
-            BibliotecaDAO.agregarLibro(titulo, isbn, seccion, ejemplares, gen.getIdGenero(), aut.getIdAutor(), idAdmin);
+            BibliotecaDAO.agregarLibro(titulo, isbn, seccion, ejemplares, gen.getIdGenero(), aut.getIdAutor(), categoria.getIdCategoria(), idAdmin);
             txtTituloLibro.clear();
             txtIsbnLibro.clear();
             txtSeccionLibro.clear();
@@ -329,6 +346,19 @@ public class AdminController {
             mostrarAlerta(Alert.AlertType.INFORMATION, "Género Agregado", "Género '" + nombre + "' agregado.");
         } catch (SQLException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
+        }
+    }
+
+    @FXML
+    private void agregarCategoria() {
+        try {
+            BibliotecaDAO.agregarCategoria(txtNuevaCategoria.getText(), Session.getUsuarioActual().getIdUsuario());
+            txtNuevaCategoria.clear();
+            recargarTodo();
+            mostrarAlerta(Alert.AlertType.INFORMATION, "Categoría agregada", "La categoría está disponible para clasificar libros.");
+        } catch (SQLException error) {
+            mostrarAlerta(Alert.AlertType.ERROR, "No se pudo agregar la categoría",
+                    "23505".equals(error.getSQLState()) ? "Esta categoría ya existe." : error.getMessage());
         }
     }
 

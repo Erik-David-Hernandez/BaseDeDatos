@@ -26,6 +26,11 @@ CREATE TABLE IF NOT EXISTS autor (
     apellido_m VARCHAR(50) NULL
 );
 
+CREATE TABLE IF NOT EXISTS categoria (
+    id_categoria SERIAL PRIMARY KEY,
+    nombre VARCHAR(100) UNIQUE NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS libro (
     id_libro SERIAL PRIMARY KEY,
     titulo VARCHAR(200) NOT NULL,
@@ -34,8 +39,10 @@ CREATE TABLE IF NOT EXISTS libro (
     n_ejemplares INTEGER NOT NULL DEFAULT 0 CHECK (n_ejemplares >= 0),
     id_genero INTEGER NOT NULL,
     id_autor INTEGER NOT NULL,
+    id_categoria INTEGER NULL,
     CONSTRAINT fk_libro_genero FOREIGN KEY (id_genero) REFERENCES genero(id_genero) ON DELETE RESTRICT,
-    CONSTRAINT fk_libro_autor FOREIGN KEY (id_autor) REFERENCES autor(id_autor) ON DELETE RESTRICT
+    CONSTRAINT fk_libro_autor FOREIGN KEY (id_autor) REFERENCES autor(id_autor) ON DELETE RESTRICT,
+    CONSTRAINT fk_libro_categoria FOREIGN KEY (id_categoria) REFERENCES categoria(id_categoria) ON DELETE RESTRICT
 );
 
 -- Soporta 'reservado', 'prestado', 'devuelto', 'vencido', 'cancelado'

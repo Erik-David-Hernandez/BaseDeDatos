@@ -27,9 +27,10 @@
                     <TableView fx:id="tablaLibros" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn text="ID" fx:id="colId" prefWidth="55"/>
-                            <TableColumn text="Título" fx:id="colTitulo" prefWidth="240"/>
-                            <TableColumn text="Autor" fx:id="colAutor" prefWidth="180"/>
-                            <TableColumn text="Género" fx:id="colGenero" prefWidth="150"/>
+                            <TableColumn text="Título" fx:id="colTitulo" prefWidth="200"/>
+                            <TableColumn text="Autor" fx:id="colAutor" prefWidth="140"/>
+                            <TableColumn text="Género" fx:id="colGenero" prefWidth="100"/>
+                            <TableColumn text="Categoría" fx:id="colCategoria" prefWidth="130"/>
                             <TableColumn text="Sección" fx:id="colSeccion" prefWidth="105"/>
                             <TableColumn text="Disponibilidad" fx:id="colDisp" prefWidth="130"/>
                         </columns>

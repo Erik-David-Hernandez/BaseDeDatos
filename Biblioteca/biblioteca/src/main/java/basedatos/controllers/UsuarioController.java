@@ -30,6 +30,7 @@ public class UsuarioController {
     @FXML private TableColumn<Libro, String> colTitulo;
     @FXML private TableColumn<Libro, String> colAutor;
     @FXML private TableColumn<Libro, String> colGenero;
+    @FXML private TableColumn<Libro, String> colCategoria;
     @FXML private TableColumn<Libro, String> colSeccion;
     @FXML private TableColumn<Libro, String> colDisp;
 
@@ -57,6 +58,7 @@ public class UsuarioController {
         colTitulo.setCellValueFactory(new PropertyValueFactory<>("titulo"));
         colAutor.setCellValueFactory(new PropertyValueFactory<>("nombreAutor"));
         colGenero.setCellValueFactory(new PropertyValueFactory<>("nombreGenero"));
+        colCategoria.setCellValueFactory(new PropertyValueFactory<>("nombreCategoria"));
         colSeccion.setCellValueFactory(new PropertyValueFactory<>("codigoSeccion"));
         colDisp.setCellValueFactory(new PropertyValueFactory<>("disponibilidadTexto"));
 

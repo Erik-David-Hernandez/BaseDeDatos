@@ -108,11 +108,12 @@ public class BibliotecaDAO {
     public static List<Libro> buscarLibros(String filtro) throws SQLException {
         List<Libro> lista = new ArrayList<>();
         String sql = "SELECT l.id_libro, l.titulo, l.isbn, l.codigo_seccion, l.n_ejemplares, " +
-                     "g.id_genero, g.nombre AS genero, a.id_autor, " +
+                     "g.id_genero, g.nombre AS genero, a.id_autor, l.id_categoria, c.nombre AS categoria, " +
                      "a.nombres || ' ' || a.apellido_p || ' ' || COALESCE(a.apellido_m, '') AS autor " +
                      "FROM libro l " +
                      "INNER JOIN genero g ON l.id_genero = g.id_genero " +
                      "INNER JOIN autor a ON l.id_autor = a.id_autor " +
+                     "LEFT JOIN categoria c ON l.id_categoria = c.id_categoria " +
                      "WHERE LOWER(l.titulo) LIKE LOWER(?) " +
                      "OR LOWER(a.nombres || ' ' || a.apellido_p || ' ' || COALESCE(a.apellido_m, '')) LIKE LOWER(?) " +
                      "OR LOWER(g.nombre) LIKE LOWER(?) " +
@@ -134,7 +135,8 @@ public class BibliotecaDAO {
                         rs.getInt("id_genero"),
                         rs.getString("genero"),
                         rs.getInt("id_autor"),
-                        rs.getString("autor").trim()
+                        rs.getString("autor").trim(),
+                        rs.getInt("id_categoria"), rs.getString("categoria")
                     ));
                 }
             }
@@ -236,6 +238,25 @@ public class BibliotecaDAO {
         registrarAuditoria(idAdmin, "CREAR_GENERO", "genero", "Agregó género: " + nombreGenero);
     }
 
+    public static List<Categoria> obtenerCategorias() throws SQLException {
+        List<Categoria> lista = new ArrayList<>();
+        try (Connection conn = ConexionDB.getConnection(); Statement st = conn.createStatement();
+                ResultSet rs = st.executeQuery("SELECT id_categoria, nombre FROM categoria ORDER BY nombre")) {
+            while (rs.next()) lista.add(new Categoria(rs.getInt("id_categoria"), rs.getString("nombre")));
+        }
+        return lista;
+    }
+
+    public static void agregarCategoria(String nombre, int idAdmin) throws SQLException {
+        if (nombre == null || nombre.trim().isEmpty()) throw new SQLException("Ingresa el nombre de la categoría.");
+        try (Connection conn = ConexionDB.getConnection();
+                PreparedStatement ps = conn.prepareStatement("INSERT INTO categoria(nombre) VALUES (?)")) {
+            ps.setString(1, nombre.trim());
+            ps.executeUpdate();
+        }
+        registrarAuditoria(idAdmin, "CREAR_CATEGORIA", "categoria", "Agregó categoría: " + nombre.trim());
+    }
+
     public static List<Autor> obtenerAutores() throws SQLException {
         List<Autor> lista = new ArrayList<>();
         String sql = "SELECT id_autor, nombres || ' ' || apellido_p || ' ' || COALESCE(apellido_m, '') AS completo FROM autor ORDER BY apellido_p";
@@ -262,7 +283,12 @@ public class BibliotecaDAO {
     }
 
     public static void agregarLibro(String titulo, String isbn, String seccion, int ejemplares, int idGenero, int idAutor, int idAdmin) throws SQLException {
-        String sql = "INSERT INTO libro (titulo, isbn, codigo_seccion, n_ejemplares, id_genero, id_autor) VALUES (?, ?, ?, ?, ?, ?)";
+        agregarLibro(titulo, isbn, seccion, ejemplares, idGenero, idAutor, 0, idAdmin);
+    }
+
+    public static void agregarLibro(String titulo, String isbn, String seccion, int ejemplares, int idGenero,
+            int idAutor, int idCategoria, int idAdmin) throws SQLException {
+        String sql = "INSERT INTO libro (titulo, isbn, codigo_seccion, n_ejemplares, id_genero, id_autor, id_categoria) VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, titulo.trim());
@@ -271,6 +297,7 @@ public class BibliotecaDAO {
             ps.setInt(4, ejemplares);
             ps.setInt(5, idGenero);
             ps.setInt(6, idAutor);
+            establecerCategoria(ps, 7, idCategoria);
             ps.executeUpdate();
         }
         registrarAuditoria(idAdmin, "CREAR_LIBRO", "libro", "Agregó libro: " + titulo + " (ISBN: " + isbn + ")");
@@ -296,15 +323,20 @@ public class BibliotecaDAO {
 
     public static void actualizarLibro(Libro original, String titulo, String isbn, String seccion,
             int disponibles, int idGenero, int idAutor, int idAdmin) throws SQLException {
+        actualizarLibro(original, titulo, isbn, seccion, disponibles, idGenero, idAutor, original.getIdCategoria(), idAdmin);
+    }
+
+    public static void actualizarLibro(Libro original, String titulo, String isbn, String seccion,
+            int disponibles, int idGenero, int idAutor, int idCategoria, int idAdmin) throws SQLException {
         if (titulo == null || titulo.trim().isEmpty() || isbn == null || isbn.trim().isEmpty()
                 || seccion == null || seccion.trim().isEmpty() || disponibles < 0) {
             throw new SQLException("Completa los datos del libro y usa una cantidad disponible no negativa.");
         }
         // Compare the original fields so an open dialog cannot overwrite another
         // librarian's edit or inventory changes from new reservations/returns.
-        String sql = "UPDATE libro SET titulo=?, isbn=?, codigo_seccion=?, n_ejemplares=?, id_genero=?, id_autor=? "
+        String sql = "UPDATE libro SET titulo=?, isbn=?, codigo_seccion=?, n_ejemplares=?, id_genero=?, id_autor=?, id_categoria=? "
                 + "WHERE id_libro=? AND titulo=? AND isbn=? AND codigo_seccion=? "
-                + "AND n_ejemplares=? AND id_genero=? AND id_autor=?";
+                + "AND n_ejemplares=? AND id_genero=? AND id_autor=? AND id_categoria IS NOT DISTINCT FROM ?";
         try (Connection conn = ConexionDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, titulo.trim());
             ps.setString(2, isbn.trim());
@@ -312,18 +344,26 @@ public class BibliotecaDAO {
             ps.setInt(4, disponibles);
             ps.setInt(5, idGenero);
             ps.setInt(6, idAutor);
-            ps.setInt(7, original.getIdLibro());
-            ps.setString(8, original.getTitulo());
-            ps.setString(9, original.getIsbn());
-            ps.setString(10, original.getCodigoSeccion());
-            ps.setInt(11, original.getNEjemplares());
-            ps.setInt(12, original.getIdGenero());
-            ps.setInt(13, original.getIdAutor());
+            establecerCategoria(ps, 7, idCategoria);
+            ps.setInt(8, original.getIdLibro());
+            ps.setString(9, original.getTitulo());
+            ps.setString(10, original.getIsbn());
+            ps.setString(11, original.getCodigoSeccion());
+            ps.setInt(12, original.getNEjemplares());
+            ps.setInt(13, original.getIdGenero());
+            ps.setInt(14, original.getIdAutor());
+            establecerCategoria(ps, 15, original.getIdCategoria());
             if (ps.executeUpdate() != 1) {
                 throw new SQLException("El libro cambió o fue eliminado. Cierra la ventana, recarga los datos y vuelve a editar.");
             }
         }
         registrarAuditoria(idAdmin, "EDITAR_LIBRO", "libro", "Editó libro #" + original.getIdLibro() + ": " + titulo.trim());
+    }
+
+    private static void establecerCategoria(PreparedStatement ps, int indice, int idCategoria) throws SQLException {
+        if (idCategoria < 0) throw new SQLException("Selecciona una categoría válida.");
+        if (idCategoria == 0) ps.setNull(indice, Types.INTEGER);
+        else ps.setInt(indice, idCategoria);
     }
 
     public static void cambiarEstadoPrestamo(Prestamo p, String nuevoEstado, int idAdmin) throws SQLException {

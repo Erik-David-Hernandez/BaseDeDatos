@@ -79,6 +79,7 @@
                                     <includes>
                                         <include>database/setup-postgresql.sh</include>
                                         <include>database/biblioteca_virtual.sql</include>
+                                        <include>database/migrations/*.sql</include>
                                     </includes>
                                 </resource>
                             </resources>
@@ -153,6 +154,7 @@
                                             <includes>
                                                 <include>database/setup-postgresql.sh</include>
                                                 <include>database/biblioteca_virtual.sql</include>
+                                                <include>database/migrations/*.sql</include>
                                             </includes>
                                         </resource>
                                     </resources>

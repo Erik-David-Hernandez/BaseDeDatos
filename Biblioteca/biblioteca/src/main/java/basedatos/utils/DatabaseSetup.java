@@ -14,7 +14,8 @@ public final class DatabaseSetup {
     private DatabaseSetup() {}
 
     public static void ensureReady() throws IOException, SQLException, InterruptedException {
-        try (Connection ignored = ConexionDB.getConnection()) {
+        try (Connection connection = ConexionDB.getConnection()) {
+            comprobarEsquema(connection);
             return;
         } catch (SQLException error) {
             String state = error.getSQLState();
@@ -22,6 +23,8 @@ public final class DatabaseSetup {
             // installed binaries and existing roles; it never resets their passwords.
             if (!"3D000".equals(state) && !"28000".equals(state)
                     && !"28P01".equals(state)
+                    && !"42P01".equals(state) && !"42703".equals(state)
+                    && !"42501".equals(state)
                     && (state == null || !state.startsWith("08"))) {
                 throw error;
             }
@@ -34,8 +37,16 @@ public final class DatabaseSetup {
                     + "). Revisa la ventana de configuración. En Windows comprueba "
                     + "POSTGRES_ADMIN_PASSWORD si falló la autenticación del administrador.");
         }
-        try (Connection ignored = ConexionDB.getConnection()) {
+        try (Connection connection = ConexionDB.getConnection()) {
+            comprobarEsquema(connection);
             // Verify the exact credentials the rest of the app will use.
+        }
+    }
+
+    private static void comprobarEsquema(Connection connection) throws SQLException {
+        try (java.sql.Statement statement = connection.createStatement()) {
+            statement.executeQuery("SELECT l.id_categoria FROM libro l LEFT JOIN categoria c "
+                    + "ON c.id_categoria = l.id_categoria LIMIT 0").close();
         }
     }
 

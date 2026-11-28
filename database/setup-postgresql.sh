@@ -148,7 +148,16 @@ SQL
 }
 
 exists=$(psql_admin -w -d postgres -Atqc "SELECT 1 FROM pg_database WHERE datname = '$db_name'")
+apply_migrations() {
+    local migration
+    for migration in "$script_dir"/migrations/*.sql; do
+        [[ -f "$migration" ]] || continue
+        printf 'Applying migration: %s\n' "${migration##*/}"
+        psql_admin -w -d "$db_name" < "$migration"
+    done
+}
 if [[ $exists == 1 ]]; then
+    apply_migrations
     grant_app_access
     printf 'Database %s already exists; skipping initialization.\n' "$db_name"
     exit 0
@@ -164,5 +173,6 @@ if ! tail -n +3 "$sql_file" | psql_admin -w -d "$db_name" --single-transaction; 
         printf 'Cleanup failed. Remove the newly created empty database before retrying.\n' >&2
     fail 'Database import failed; see SQL error above.'
 fi
+apply_migrations
 grant_app_access
 printf 'Initialized %s from %s.\n' "$db_name" "$sql_file"

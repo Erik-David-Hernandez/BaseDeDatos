@@ -10,9 +10,17 @@ public class Libro {
     private String nombreGenero;
     private int idAutor;
     private String nombreAutor;
+    private int idCategoria;
+    private String nombreCategoria;
 
     public Libro(int idLibro, String titulo, String isbn, String codigoSeccion,
                  int nEjemplares, int idGenero, String nombreGenero, int idAutor, String nombreAutor) {
+        this(idLibro, titulo, isbn, codigoSeccion, nEjemplares, idGenero, nombreGenero, idAutor, nombreAutor, 0, null);
+    }
+
+    public Libro(int idLibro, String titulo, String isbn, String codigoSeccion,
+                 int nEjemplares, int idGenero, String nombreGenero, int idAutor, String nombreAutor,
+                 int idCategoria, String nombreCategoria) {
         this.idLibro = idLibro;
         this.titulo = titulo;
         this.isbn = isbn;
@@ -22,6 +30,8 @@ public class Libro {
         this.nombreGenero = nombreGenero;
         this.idAutor = idAutor;
         this.nombreAutor = nombreAutor;
+        this.idCategoria = idCategoria;
+        this.nombreCategoria = nombreCategoria;
     }
 
     public int getIdLibro() { return idLibro; }
@@ -33,6 +43,8 @@ public class Libro {
     public String getNombreGenero() { return nombreGenero; }
     public int getIdAutor() { return idAutor; }
     public String getNombreAutor() { return nombreAutor; }
+    public int getIdCategoria() { return idCategoria; }
+    public String getNombreCategoria() { return nombreCategoria == null ? "Sin categoría" : nombreCategoria; }
 
     public String getDisponibilidadTexto() {
         return nEjemplares > 0 ? "Disponible (" + nEjemplares + ")" : "Agotado (0)";

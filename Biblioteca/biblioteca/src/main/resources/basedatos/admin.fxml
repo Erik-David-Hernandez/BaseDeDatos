@@ -18,7 +18,7 @@
     <center>
         <TabPane tabClosingPolicy="UNAVAILABLE">
             <!-- TAB 1: GESTIÓN DE LIBROS, GÉNEROS Y AUTORES -->
-            <Tab text="Libros, Géneros y Autores">
+            <Tab text="Libros, Géneros y Categorías">
                 <VBox spacing="10" style="-fx-padding: 10;">
                     <HBox spacing="10">
                         <!-- Formulario Nuevo Libro -->
@@ -28,6 +28,7 @@
                                 <TextField fx:id="txtTituloLibro" promptText="Título del libro" HBox.hgrow="ALWAYS"/>
                                 <TextField fx:id="txtIsbnLibro" promptText="ISBN (ej. 978-...)" prefWidth="140"/>
                                 <TextField fx:id="txtSeccionLibro" promptText="Sección (SEC-...)" prefWidth="115"/>
+                                <ComboBox fx:id="cbCategoriaLibro" promptText="Categoría" prefWidth="170"/>
                             </HBox>
                             <HBox spacing="8" alignment="CENTER_LEFT">
                                 <BuscadorAutores fx:id="buscadorAutorLibro" prefWidth="180"/>
@@ -56,14 +57,20 @@
                         </HBox>
                     </HBox>
 
+                    <HBox spacing="8" alignment="CENTER_LEFT" styleClass="card">
+                        <Label text="Nueva categoría:" style="-fx-font-weight: bold;"/>
+                        <TextField fx:id="txtNuevaCategoria" promptText="Nombre de la categoría" HBox.hgrow="ALWAYS"/>
+                        <Button text="Agregar categoría" onAction="#agregarCategoria"/>
+                    </HBox>
                     <Label text="Doble clic en un libro para editarlo."/>
                     <TableView fx:id="tablaAdminLibros" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn text="ID" fx:id="colLibId" prefWidth="55"/>
-                            <TableColumn text="Título" fx:id="colLibTitulo" prefWidth="240"/>
+                            <TableColumn text="Título" fx:id="colLibTitulo" prefWidth="200"/>
                             <TableColumn text="ISBN" fx:id="colLibIsbn" prefWidth="135"/>
-                            <TableColumn text="Autor" fx:id="colLibAutor" prefWidth="180"/>
-                            <TableColumn text="Género" fx:id="colLibGenero" prefWidth="150"/>
+                            <TableColumn text="Autor" fx:id="colLibAutor" prefWidth="150"/>
+                            <TableColumn text="Género" fx:id="colLibGenero" prefWidth="120"/>
+                            <TableColumn text="Categoría" fx:id="colLibCategoria" prefWidth="130"/>
                             <TableColumn text="Ejemplares" fx:id="colLibEjemplares" prefWidth="90"/>
                         </columns>
                     </TableView>
