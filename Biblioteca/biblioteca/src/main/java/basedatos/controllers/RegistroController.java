@@ -5,11 +5,13 @@ import basedatos.models.BibliotecaDAO;
 
 import javafx.fxml.FXML;
 import javafx.beans.binding.Bindings;
+import javafx.beans.binding.BooleanBinding;
 import javafx.scene.control.Alert;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.MouseButton;
 import java.io.IOException;
@@ -23,15 +25,23 @@ public class RegistroController {
     @FXML private PasswordField txtConfirmarPassword;
     @FXML private CheckBox chkPrivacidad;
     @FXML private Button btnRegistrar;
+    @FXML private Label lblErrorPassword;
 
     @FXML
     public void initialize() {
         btnRegistrar.disableProperty().bind(Bindings.createBooleanBinding(
                 () -> txtNombre.getText().trim().isEmpty() || txtEmail.getText().trim().isEmpty()
                         || txtPassword.getText().isEmpty() || txtConfirmarPassword.getText().isEmpty()
+                        || !txtPassword.getText().equals(txtConfirmarPassword.getText())
                         || !chkPrivacidad.isSelected(),
                 txtNombre.textProperty(), txtEmail.textProperty(), txtPassword.textProperty(),
                 txtConfirmarPassword.textProperty(), chkPrivacidad.selectedProperty()));
+        BooleanBinding noCoinciden = Bindings.createBooleanBinding(
+                () -> !txtConfirmarPassword.getText().isEmpty()
+                        && !txtPassword.getText().equals(txtConfirmarPassword.getText()),
+                txtPassword.textProperty(), txtConfirmarPassword.textProperty());
+        lblErrorPassword.visibleProperty().bind(noCoinciden);
+        lblErrorPassword.managedProperty().bind(lblErrorPassword.visibleProperty());
     }
 
     @FXML
