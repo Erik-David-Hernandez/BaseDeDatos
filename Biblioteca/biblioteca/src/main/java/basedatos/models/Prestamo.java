@@ -12,12 +12,20 @@ public class Prestamo {
     private String tituloLibro;
     private LocalDateTime fechaInicio;
     private LocalDateTime fechaFin;
+    private LocalDateTime fechaDevolucionReal;
     private String estado;
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     public Prestamo(int idReserva, int idUsuario, String nombreUsuario, String emailUsuario,
                     int idLibro, String tituloLibro, LocalDateTime fechaInicio, LocalDateTime fechaFin, String estado) {
+        this(idReserva, idUsuario, nombreUsuario, emailUsuario, idLibro, tituloLibro,
+                fechaInicio, fechaFin, null, estado);
+    }
+
+    public Prestamo(int idReserva, int idUsuario, String nombreUsuario, String emailUsuario,
+                    int idLibro, String tituloLibro, LocalDateTime fechaInicio, LocalDateTime fechaFin,
+                    LocalDateTime fechaDevolucionReal, String estado) {
         this.idReserva = idReserva;
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
@@ -26,6 +34,7 @@ public class Prestamo {
         this.tituloLibro = tituloLibro;
         this.fechaInicio = fechaInicio;
         this.fechaFin = fechaFin;
+        this.fechaDevolucionReal = fechaDevolucionReal;
         this.estado = estado;
     }
 
@@ -37,8 +46,13 @@ public class Prestamo {
     public String getTituloLibro() { return tituloLibro; }
     public LocalDateTime getFechaInicio() { return fechaInicio; }
     public LocalDateTime getFechaFin() { return fechaFin; }
+    public LocalDateTime getFechaDevolucionReal() { return fechaDevolucionReal; }
     public String getFechaInicioTexto() { return fechaInicio != null ? fechaInicio.format(FMT) : ""; }
     public String getFechaFinTexto() { return fechaFin != null ? fechaFin.format(FMT) : ""; }
+    public String getFechaDevolucionRealTexto() {
+        return fechaDevolucionReal != null ? fechaDevolucionReal.format(FMT)
+                : "devuelto".equals(estado) ? "No registrada" : "—";
+    }
     public String getEstado() { return estado; }
 
     public boolean puedeCancelarReserva(LocalDateTime ahora) {

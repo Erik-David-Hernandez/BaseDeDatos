@@ -50,9 +50,10 @@
                     <TableView fx:id="tablaHistorial" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn text="Folio" fx:id="colHistId" prefWidth="70"/>
-                            <TableColumn text="Libro" fx:id="colHistLibro" prefWidth="280"/>
-                            <TableColumn text="Fecha Inicio" fx:id="colHistInicio" prefWidth="160"/>
-                            <TableColumn text="Fecha Devolución" fx:id="colHistFin" prefWidth="160"/>
+                            <TableColumn text="Libro" fx:id="colHistLibro" prefWidth="240"/>
+                            <TableColumn text="Fecha Inicio" fx:id="colHistInicio" prefWidth="140"/>
+                            <TableColumn text="Fecha límite" fx:id="colHistFin" prefWidth="140"/>
+                            <TableColumn text="Devolución real" fx:id="colHistDevolucionReal" prefWidth="140"/>
                             <TableColumn text="Estado" fx:id="colHistEstado" prefWidth="120"/>
                         </columns>
                     </TableView>

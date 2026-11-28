@@ -93,10 +93,11 @@
                     <TableView fx:id="tablaAdminPrestamos" VBox.vgrow="ALWAYS">
                         <columns>
                             <TableColumn text="ID" fx:id="colPresId" prefWidth="60"/>
-                            <TableColumn text="Usuario" fx:id="colPresUsuario" prefWidth="180"/>
-                            <TableColumn text="Libro" fx:id="colPresLibro" prefWidth="240"/>
-                            <TableColumn text="Inicio" fx:id="colPresInicio" prefWidth="140"/>
-                            <TableColumn text="Fin" fx:id="colPresFin" prefWidth="140"/>
+                            <TableColumn text="Usuario" fx:id="colPresUsuario" prefWidth="150"/>
+                            <TableColumn text="Libro" fx:id="colPresLibro" prefWidth="200"/>
+                            <TableColumn text="Inicio" fx:id="colPresInicio" prefWidth="120"/>
+                            <TableColumn text="Fecha límite" fx:id="colPresFin" prefWidth="120"/>
+                            <TableColumn text="Devolución real" fx:id="colPresDevolucionReal" prefWidth="140"/>
                             <TableColumn text="Estado" fx:id="colPresEstado" prefWidth="110"/>
                         </columns>
                     </TableView>

@@ -185,7 +185,7 @@ public class BibliotecaDAO {
     public static List<Prestamo> obtenerHistorialUsuario(int idUsuario) throws SQLException {
         List<Prestamo> lista = new ArrayList<>();
         String sql = "SELECT p.id_reserva, p.id_usuario, u.nombre, u.email, p.id_libro, l.titulo, " +
-                     "p.fecha_inicio, p.fecha_fin, p.estado " +
+                     "p.fecha_inicio, p.fecha_fin, p.fecha_devolucion_real, p.estado " +
                      "FROM prestamo p " +
                      "INNER JOIN usuario u ON p.id_usuario = u.id_usuario " +
                      "INNER JOIN libro l ON p.id_libro = l.id_libro " +
@@ -195,21 +195,19 @@ public class BibliotecaDAO {
             ps.setInt(1, idUsuario);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    lista.add(new Prestamo(
-                        rs.getInt("id_reserva"),
-                        rs.getInt("id_usuario"),
-                        rs.getString("nombre"),
-                        rs.getString("email"),
-                        rs.getInt("id_libro"),
-                        rs.getString("titulo"),
-                        rs.getTimestamp("fecha_inicio").toLocalDateTime(),
-                        rs.getTimestamp("fecha_fin").toLocalDateTime(),
-                        rs.getString("estado")
-                    ));
+                    lista.add(leerPrestamo(rs));
                 }
             }
         }
         return lista;
+    }
+
+    private static Prestamo leerPrestamo(ResultSet rs) throws SQLException {
+        Timestamp devolucion = rs.getTimestamp("fecha_devolucion_real");
+        return new Prestamo(rs.getInt("id_reserva"), rs.getInt("id_usuario"),
+                rs.getString("nombre"), rs.getString("email"), rs.getInt("id_libro"), rs.getString("titulo"),
+                rs.getTimestamp("fecha_inicio").toLocalDateTime(), rs.getTimestamp("fecha_fin").toLocalDateTime(),
+                devolucion == null ? null : devolucion.toLocalDateTime(), rs.getString("estado"));
     }
 
     // =========================================================================
@@ -281,7 +279,7 @@ public class BibliotecaDAO {
     public static List<Prestamo> obtenerTodosPrestamos() throws SQLException {
         List<Prestamo> lista = new ArrayList<>();
         String sql = "SELECT p.id_reserva, p.id_usuario, u.nombre, u.email, p.id_libro, l.titulo, " +
-                     "p.fecha_inicio, p.fecha_fin, p.estado " +
+                     "p.fecha_inicio, p.fecha_fin, p.fecha_devolucion_real, p.estado " +
                      "FROM prestamo p " +
                      "INNER JOIN usuario u ON p.id_usuario = u.id_usuario " +
                      "INNER JOIN libro l ON p.id_libro = l.id_libro " +
@@ -290,17 +288,7 @@ public class BibliotecaDAO {
              Statement st = conn.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
             while (rs.next()) {
-                lista.add(new Prestamo(
-                    rs.getInt("id_reserva"),
-                    rs.getInt("id_usuario"),
-                    rs.getString("nombre"),
-                    rs.getString("email"),
-                    rs.getInt("id_libro"),
-                    rs.getString("titulo"),
-                    rs.getTimestamp("fecha_inicio").toLocalDateTime(),
-                    rs.getTimestamp("fecha_fin").toLocalDateTime(),
-                    rs.getString("estado")
-                ));
+                lista.add(leerPrestamo(rs));
             }
         }
         return lista;

@@ -79,6 +79,7 @@ public class AdminController {
     @FXML private TableColumn<Prestamo, String> colPresLibro;
     @FXML private TableColumn<Prestamo, String> colPresInicio;
     @FXML private TableColumn<Prestamo, String> colPresFin;
+    @FXML private TableColumn<Prestamo, String> colPresDevolucionReal;
     @FXML private TableColumn<Prestamo, String> colPresEstado;
 
     // Tab 3: Usuarios
@@ -135,6 +136,7 @@ public class AdminController {
         colPresLibro.setCellValueFactory(new PropertyValueFactory<>("tituloLibro"));
         colPresInicio.setCellValueFactory(new PropertyValueFactory<>("fechaInicioTexto"));
         colPresFin.setCellValueFactory(new PropertyValueFactory<>("fechaFinTexto"));
+        colPresDevolucionReal.setCellValueFactory(new PropertyValueFactory<>("fechaDevolucionRealTexto"));
         colPresEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
         SortedList<Prestamo> ordenados = new SortedList<>(prestamosFiltrados);
         ordenados.comparatorProperty().bind(tablaAdminPrestamos.comparatorProperty());

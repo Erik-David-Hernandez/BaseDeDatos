@@ -39,6 +39,7 @@ public class UsuarioController {
     @FXML private TableColumn<Prestamo, String> colHistLibro;
     @FXML private TableColumn<Prestamo, String> colHistInicio;
     @FXML private TableColumn<Prestamo, String> colHistFin;
+    @FXML private TableColumn<Prestamo, String> colHistDevolucionReal;
     @FXML private TableColumn<Prestamo, String> colHistEstado;
     @FXML private Button btnCancelarReserva;
 
@@ -63,6 +64,7 @@ public class UsuarioController {
         colHistLibro.setCellValueFactory(new PropertyValueFactory<>("tituloLibro"));
         colHistInicio.setCellValueFactory(new PropertyValueFactory<>("fechaInicioTexto"));
         colHistFin.setCellValueFactory(new PropertyValueFactory<>("fechaFinTexto"));
+        colHistDevolucionReal.setCellValueFactory(new PropertyValueFactory<>("fechaDevolucionRealTexto"));
         colHistEstado.setCellValueFactory(new PropertyValueFactory<>("estado"));
         btnCancelarReserva.setDisable(true);
         tablaHistorial.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) ->
