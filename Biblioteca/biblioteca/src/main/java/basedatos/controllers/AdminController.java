@@ -422,7 +422,7 @@ public class AdminController {
             BibliotecaDAO.cambiarEstadoPrestamo(p, estado, Session.getUsuarioActual().getIdUsuario());
             recargarTodo();
             mostrarAlerta(Alert.AlertType.INFORMATION, "Estado Actualizado",
-                    "Préstamo #" + p.getIdReserva() + " marcado como '" + estado + "' y correo enviado al lector.");
+                    "Préstamo #" + p.getIdReserva() + " marcado como '" + estado + "' y notificación registrada para el lector.");
         } catch (SQLException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "Error", e.getMessage());
         }

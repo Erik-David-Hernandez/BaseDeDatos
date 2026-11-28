@@ -64,6 +64,23 @@
                     </HBox>
                 </VBox>
             </Tab>
+            <Tab fx:id="tabNotificaciones" text="Notificaciones">
+                <VBox spacing="10" style="-fx-padding: 12;">
+                    <HBox spacing="10" alignment="CENTER_LEFT">
+                        <Label text="Notificaciones registradas en la plataforma" HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <Button text="Actualizar" onAction="#cargarNotificaciones"/>
+                    </HBox>
+                    <Label fx:id="lblSinNotificaciones" text="No tienes notificaciones."/>
+                    <HBox spacing="15" VBox.vgrow="ALWAYS">
+                        <ListView fx:id="listaNotificaciones" prefWidth="310" editable="false"/>
+                        <VBox spacing="10" HBox.hgrow="ALWAYS">
+                            <Label fx:id="lblAsuntoNotificacion" text="Selecciona una notificación" wrapText="true" style="-fx-font-weight: bold; -fx-font-size: 16px;"/>
+                            <Label fx:id="lblFechaNotificacion" wrapText="true"/>
+                            <TextArea fx:id="txtDetalleNotificacion" editable="false" wrapText="true" VBox.vgrow="ALWAYS"/>
+                        </VBox>
+                    </HBox>
+                </VBox>
+            </Tab>
         </TabPane>
     </center>
 </BorderPane>

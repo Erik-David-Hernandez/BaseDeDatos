@@ -4,6 +4,7 @@ import basedatos.App;
 import basedatos.models.BibliotecaDAO;
 import basedatos.models.Libro;
 import basedatos.models.Prestamo;
+import basedatos.models.Notificacion;
 import basedatos.utils.Session;
 import basedatos.models.Usuario;
 
@@ -43,6 +44,12 @@ public class UsuarioController {
     @FXML private TableColumn<Prestamo, String> colHistDevolucionReal;
     @FXML private TableColumn<Prestamo, String> colHistEstado;
     @FXML private Button btnCancelarReserva;
+    @FXML private Tab tabNotificaciones;
+    @FXML private ListView<Notificacion> listaNotificaciones;
+    @FXML private Label lblSinNotificaciones;
+    @FXML private Label lblAsuntoNotificacion;
+    @FXML private Label lblFechaNotificacion;
+    @FXML private TextArea txtDetalleNotificacion;
 
     @FXML
     public void initialize() {
@@ -71,9 +78,25 @@ public class UsuarioController {
         btnCancelarReserva.setDisable(true);
         tablaHistorial.getSelectionModel().selectedItemProperty().addListener((obs, anterior, seleccionado) ->
                 btnCancelarReserva.setDisable(seleccionado == null || !seleccionado.puedeCancelarReserva(LocalDateTime.now())));
+        listaNotificaciones.setCellFactory(lista -> {
+            ListCell<Notificacion> celda = new ListCell<Notificacion>() {
+                @Override protected void updateItem(Notificacion notificacion, boolean vacia) {
+                    super.updateItem(notificacion, vacia);
+                    setText(vacia || notificacion == null ? null : notificacion.getAsunto() + "\n" + notificacion.getFechaTexto());
+                }
+            };
+            celda.setWrapText(true);
+            return celda;
+        });
+        listaNotificaciones.getSelectionModel().selectedItemProperty()
+                .addListener((obs, anterior, seleccionada) -> mostrarNotificacion(seleccionada));
+        tabNotificaciones.selectedProperty().addListener((obs, anterior, seleccionada) -> {
+            if (seleccionada) cargarNotificaciones();
+        });
 
         cargarLibros("");
         cargarHistorial();
+        cargarNotificaciones();
     }
 
     @FXML
@@ -106,6 +129,33 @@ public class UsuarioController {
     }
 
     @FXML
+    private void cargarNotificaciones() {
+        Usuario usuario = Session.getUsuarioActual();
+        if (usuario == null) return;
+        Notificacion anterior = listaNotificaciones.getSelectionModel().getSelectedItem();
+        try {
+            listaNotificaciones.setItems(FXCollections.observableArrayList(
+                    BibliotecaDAO.obtenerNotificaciones(usuario.getIdUsuario())));
+            lblSinNotificaciones.setVisible(listaNotificaciones.getItems().isEmpty());
+            lblSinNotificaciones.setManaged(listaNotificaciones.getItems().isEmpty());
+            if (anterior != null) {
+                listaNotificaciones.getItems().stream()
+                        .filter(n -> n.getIdNotificacion() == anterior.getIdNotificacion()).findFirst()
+                        .ifPresent(n -> listaNotificaciones.getSelectionModel().select(n));
+            }
+            mostrarNotificacion(listaNotificaciones.getSelectionModel().getSelectedItem());
+        } catch (SQLException error) {
+            mostrarAlerta(Alert.AlertType.ERROR, "Notificaciones", "No se pudieron cargar las notificaciones: " + error.getMessage());
+        }
+    }
+
+    private void mostrarNotificacion(Notificacion notificacion) {
+        lblAsuntoNotificacion.setText(notificacion == null ? "Selecciona una notificación" : notificacion.getAsunto());
+        lblFechaNotificacion.setText(notificacion == null ? "" : "Fecha: " + notificacion.getFechaTexto());
+        txtDetalleNotificacion.setText(notificacion == null ? "" : notificacion.getMensaje());
+    }
+
+    @FXML
     private void reservarLibro() {
         Libro seleccionado = tablaLibros.getSelectionModel().getSelectedItem();
         Usuario u = Session.getUsuarioActual();
@@ -124,9 +174,10 @@ public class UsuarioController {
             int dias = spDiasPrestamo.getValue();
             BibliotecaDAO.reservarLibro(u, seleccionado, inicio, dias);
             mostrarAlerta(Alert.AlertType.INFORMATION, "Reserva Exitosa",
-                    "Has reservado '" + seleccionado.getTitulo() + "'. Revisa tu correo para los detalles.");
+                    "Has reservado '" + seleccionado.getTitulo() + "'. Consulta la pestaña Notificaciones para ver los detalles.");
             cargarLibros(txtBuscar.getText());
             cargarHistorial();
+            cargarNotificaciones();
         } catch (SQLException e) {
             mostrarAlerta(Alert.AlertType.ERROR, "No se pudo reservar", e.getMessage());
         }

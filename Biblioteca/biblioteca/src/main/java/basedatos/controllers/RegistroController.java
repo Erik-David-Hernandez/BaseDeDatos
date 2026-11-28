@@ -50,7 +50,7 @@ public class RegistroController {
         try {
             if (BibliotecaDAO.registrarUsuario(nombre, email, pass)) {
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Registro Exitoso",
-                        "Cuenta creada correctamente. Se envió una confirmación a tu correo.");
+                        "Cuenta creada correctamente. Puedes consultar la confirmación en Notificaciones después de iniciar sesión.");
                 App.setRoot("login");
             }
         } catch (SQLException e) {

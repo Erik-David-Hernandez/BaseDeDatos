@@ -40,10 +40,26 @@ public class BibliotecaDAO {
             ps.setString(2, asunto);
             ps.setString(3, mensaje);
             ps.executeUpdate();
-            System.out.println("[CORREO ENVIADO a " + emailDestino + "] " + asunto + " -> " + mensaje);
+            System.out.println("[NOTIFICACIÓN REGISTRADA para " + emailDestino + "] " + asunto + " -> " + mensaje);
         } catch (SQLException e) {
             System.err.println("Error al registrar notificación de correo: " + e.getMessage());
         }
+    }
+
+    public static List<Notificacion> obtenerNotificaciones(int idUsuario) throws SQLException {
+        List<Notificacion> lista = new ArrayList<>();
+        String sql = "SELECT id_notificacion, asunto, mensaje, fecha_envio FROM notificacion_correo "
+                + "WHERE id_usuario = ? AND enviado = TRUE ORDER BY fecha_envio DESC, id_notificacion DESC";
+        try (Connection conn = ConexionDB.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, idUsuario);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    lista.add(new Notificacion(rs.getInt("id_notificacion"), rs.getString("asunto"),
+                            rs.getString("mensaje"), rs.getTimestamp("fecha_envio").toLocalDateTime()));
+                }
+            }
+        }
+        return lista;
     }
 
     // =========================================================================
